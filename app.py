@@ -26,7 +26,7 @@ def toggle_theme():
 is_dark = st.session_state.theme_mode == "dark"
 
 # ---------------------------------------------------------
-# VARIABLES DE COLOR Y ANIMACIÓN DE BALANZA
+# PALETA DE COLORES (BLANCO AMARILLENTO CÁLIDO & DORADO)
 # ---------------------------------------------------------
 if is_dark:
     bg_app = "#12110E"
@@ -38,22 +38,20 @@ if is_dark:
     text_muted = "#B8B0A1"
     gold_main = "#E5C06A"
     gold_bright = "#FFD700"
-    btn_text = "CAMBIAR TEMA CLARO"
-    # Inclinación realista de la viga en modo oscuro (baja)
-    beam_transform = "rotate(12deg)"
+    btn_text = "CAMBIAR A TEMA CLARO"
+    beam_transform = "rotate(14deg)" # Inclinación suave en modo oscuro
 else:
-    bg_app = "#FCF8EB"        # Blanco amarillento / crema cálido elegante
+    bg_app = "#FAF6E8"        # Blanco amarillento / crema cálido de lujo
     bg_nav = "#FFFFFF"
     bg_card = "#FFFFFF"
-    bg_secondary = "#F2EDDF"
-    border_color = "#E8DFCA"
+    bg_secondary = "#F3EDDF"
+    border_color = "#E6DCB8"
     text_main = "#1E1A15"     
     text_muted = "#6B6255"
     gold_main = "#D4AF37"     
     gold_bright = "#E5B80B"   
-    btn_text = "CAMBIAR TEMA OSCURO"
-    # Viga recta equilibrada en modo claro (sube)
-    beam_transform = "rotate(0deg)"
+    btn_text = "CAMBIAR A TEMA OSCURO"
+    beam_transform = "rotate(0deg)"  # Balanza recta equilibrada en modo claro
 
 # ---------------------------------------------------------
 # ESTILOS CSS DINÁMICOS
@@ -76,12 +74,12 @@ st.markdown(f"""
     }}
 
     .block-container {{
-        padding-top: 6rem !important;
+        padding-top: 5.5rem !important;
         padding-bottom: 4rem !important;
         max-width: 1100px !important;
     }}
 
-    /* NAVBAR FIJO */
+    /* NAVBAR FIJO DE LUJO */
     .custom-navbar {{
         position: fixed;
         top: 0;
@@ -95,25 +93,25 @@ st.markdown(f"""
         align-items: center;
         padding: 0 5%;
         z-index: 999999;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+        box-shadow: 0 2px 15px rgba(0,0,0,0.03);
         transition: background-color 0.4s ease;
     }}
 
     .nav-brand {{
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
         font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 700;
         color: {text_main};
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
     }}
 
     .nav-links {{
         display: flex;
-        gap: 2rem;
-        font-size: 0.85rem;
+        gap: 2.2rem;
+        font-size: 0.82rem;
         font-weight: 600;
         letter-spacing: 1.5px;
         text-transform: uppercase;
@@ -129,16 +127,15 @@ st.markdown(f"""
         color: {gold_bright};
     }}
 
-    /* BALANZA ANIMADA Y CONTENEDOR TEMA */
+    /* CONTENEDOR DE LA BALANZA ANIMADA */
     .theme-wrapper {{
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         margin: 1.5rem auto 1rem auto;
     }}
 
-    /* FIX DEFINITIVO: BOTÓN SIN RECORTAR TEXTO Y CON ZOOM HOVER */
+    /* REGLAS PARA EVITAR CUALQUIER RECORTADO DE TEXTO EN EL BOTÓN */
     .stButton {{
         display: flex !important;
         justify-content: center !important;
@@ -150,15 +147,14 @@ st.markdown(f"""
         color: {text_main} !important;
         border: 1px solid {border_color} !important;
         border-radius: 6px !important;
-        padding: 0.75rem 2rem !important;
+        padding: 0.75rem 2.2rem !important;
         font-size: 0.82rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         letter-spacing: 1.5px !important;
         text-transform: uppercase !important;
-        white-space: nowrap !important; /* EVITA LOS PUNTOS SUSPENSIVOS */
+        white-space: nowrap !important; /* PREVIENE RECORTE O PUNTOS SUSPENSIVOS */
         width: auto !important;
-        min-width: 230px !important;
-        max-width: 100% !important;
+        min-width: 250px !important;
         cursor: pointer !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         margin: 0 auto !important;
@@ -168,8 +164,8 @@ st.markdown(f"""
     .stButton > button:hover {{
         border-color: {gold_bright} !important;
         color: {gold_bright} !important;
-        transform: scale(1.05) !important; /* ZOOM DINÁMICO SUTIL */
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2) !important;
+        transform: scale(1.05) !important; /* ZOOM DINÁMICO HOVER */
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.22) !important;
     }}
 
     .btn-primary > button {{
@@ -284,35 +280,13 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# ÍCONOS SVG PROFESIONALES Y BALANZA VECTORIAL ANIMADA
+# ELEMENTOS SVG LIMPIOS (SIN COMENTARIOS NI IDENTACIONES)
 # ---------------------------------------------------------
-icon_scale_nav = f"""<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17M8 21h8M5 7h14M5 7l-3 6h6l-3-6zM19 7l-3 6h6l-3-6z"/></svg>"""
+# Emblemático Logo del Navbar
+nav_logo_svg = f"""<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="{gold_bright}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
 
-# BALANZA PROFESIONAL CON ESTRUCTURA PIVOTANTE EN SVG
-icon_scale_animated = f"""
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Pilar Central Fijo -->
-    <path d="M32 10v42" stroke-width="2.5" />
-    <path d="M18 52h28" stroke-width="3" />
-    <path d="M25 52l7-5 7 5" stroke-width="2" />
-    <circle cx="32" cy="10" r="3.5" fill="{gold_main}" />
-    
-    <!-- Viga Pivotante y Platillos Animados -->
-    <g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);">
-        <!-- Travesaño Principal -->
-        <path d="M10 16h44" stroke-width="3" />
-        <path d="M32 11v5" stroke-width="2" />
-        
-        <!-- Cadena e Inclinación Izquierda -->
-        <path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5" />
-        <path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.2" stroke-width="2" />
-        
-        <!-- Cadena e Inclinación Derecha -->
-        <path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5" />
-        <path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.2" stroke-width="2" />
-    </g>
-</svg>
-"""
+# Balanza Vectorial Principal Animada
+main_scale_svg = f"""<svg width="68" height="68" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
 
 icon_alert = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>"""
 icon_shield = f"""<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>"""
@@ -321,13 +295,13 @@ icon_briefcase = f"""<svg width="34" height="34" viewBox="0 0 24 24" fill="none"
 icon_check = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>"""
 
 # ---------------------------------------------------------
-# NAVBAR SUPERIOR FIJO
+# NAVBAR SUPERIOR
 # ---------------------------------------------------------
 st.markdown(f"""
     <div class="custom-navbar">
         <div class="nav-brand">
-            {icon_scale_nav}
-            HERMANDAD
+            {nav_logo_svg}
+            ABOGADAS HERMANDAD
         </div>
         <div class="nav-links">
             <span>Inicio</span>
@@ -339,15 +313,15 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# BALANZA ANIMADA Y BOTÓN DE TEMA CENTRADO
+# BALANZA Y BOTÓN DE CAMBIO DE TEMA
 # ---------------------------------------------------------
-col_left, col_center, col_right = st.columns([2, 4, 2])
-with col_center:
-    st.markdown(f'<div class="theme-wrapper">{icon_scale_animated}</div>', unsafe_allow_html=True)
+col_l, col_c, col_r = st.columns([2, 4, 2])
+with col_c:
+    st.markdown(f'<div class="theme-wrapper">{main_scale_svg}</div>', unsafe_allow_html=True)
     st.button(btn_text, on_click=toggle_theme)
 
 # ---------------------------------------------------------
-# SECCIÓN HERO
+# HERO PRINCIPAL
 # ---------------------------------------------------------
 st.markdown(f"""
     <div class="hero-section">
@@ -417,7 +391,7 @@ with col3:
 st.write("---")
 
 # ---------------------------------------------------------
-# FORMULARIO DE CONSULTA
+# FORMULARIO DE CONSULTA CONFIDENCIAL
 # ---------------------------------------------------------
 st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin-top: 3rem; margin-bottom: 0.5rem;'>Agenda tu Consulta Confidencial</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 1rem; margin-bottom: 3rem;'>Tus datos están protegidos bajo estricto secreto profesional.</p>", unsafe_allow_html=True)
