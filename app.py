@@ -26,7 +26,7 @@ def toggle_theme():
 is_dark = st.session_state.theme_mode == "dark"
 
 # ---------------------------------------------------------
-# VARIABLES DE COLOR Y ANIMACIÓN
+# VARIABLES DE COLOR Y ANIMACIÓN DE BALANZA
 # ---------------------------------------------------------
 if is_dark:
     bg_app = "#12110E"
@@ -38,11 +38,11 @@ if is_dark:
     text_muted = "#B8B0A1"
     gold_main = "#E5C06A"
     gold_bright = "#FFD700"
-    btn_text = "Cambiar Tema Claro"
-    # La balanza se inclina hacia abajo
-    scale_transform = "rotate(15deg) translateY(4px)"
+    btn_text = "CAMBIAR TEMA CLARO"
+    # Inclinación realista de la viga en modo oscuro (baja)
+    beam_transform = "rotate(12deg)"
 else:
-    bg_app = "#FCF8EB"        # Blanco más amarillento / crema cálido
+    bg_app = "#FCF8EB"        # Blanco amarillento / crema cálido elegante
     bg_nav = "#FFFFFF"
     bg_card = "#FFFFFF"
     bg_secondary = "#F2EDDF"
@@ -51,12 +51,12 @@ else:
     text_muted = "#6B6255"
     gold_main = "#D4AF37"     
     gold_bright = "#E5B80B"   
-    btn_text = "Cambiar Tema Oscuro"
-    # La balanza sube / se mantiene equilibrada
-    scale_transform = "rotate(0deg) translateY(0px)"
+    btn_text = "CAMBIAR TEMA OSCURO"
+    # Viga recta equilibrada en modo claro (sube)
+    beam_transform = "rotate(0deg)"
 
 # ---------------------------------------------------------
-# ESTILOS CSS DINÁMICOS Y ESTRUCTURA
+# ESTILOS CSS DINÁMICOS
 # ---------------------------------------------------------
 st.markdown(f"""
     <style>
@@ -129,43 +129,47 @@ st.markdown(f"""
         color: {gold_bright};
     }}
 
-    /* BALANZA ANIMADA Y BOTÓN TEMA CENTRADO */
+    /* BALANZA ANIMADA Y CONTENEDOR TEMA */
     .theme-wrapper {{
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin: 1.5rem auto 3rem auto;
-        gap: 8px;
+        margin: 1.5rem auto 1rem auto;
     }}
 
-    .animated-scale {{
-        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        transform: {scale_transform};
-        transform-origin: 50% 20%;
+    /* FIX DEFINITIVO: BOTÓN SIN RECORTAR TEXTO Y CON ZOOM HOVER */
+    .stButton {{
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
     }}
 
-    /* BOTONES GLOBALES CON ZOOM DINÁMICO */
     .stButton > button {{
-        background-color: {bg_app} !important;
+        background-color: {bg_card} !important;
         color: {text_main} !important;
         border: 1px solid {border_color} !important;
-        border-radius: 4px !important;
-        padding: 0.5rem 1.2rem !important; /* Más pequeño */
-        font-size: 0.8rem !important;
+        border-radius: 6px !important;
+        padding: 0.75rem 2rem !important;
+        font-size: 0.82rem !important;
         font-weight: 600 !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 1.5px !important;
         text-transform: uppercase !important;
+        white-space: nowrap !important; /* EVITA LOS PUNTOS SUSPENSIVOS */
+        width: auto !important;
+        min-width: 230px !important;
+        max-width: 100% !important;
+        cursor: pointer !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-        display: flex !important;
-        margin: 0 auto !important; /* Centrado */
+        margin: 0 auto !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02) !important;
     }}
 
     .stButton > button:hover {{
         border-color: {gold_bright} !important;
         color: {gold_bright} !important;
-        transform: scale(1.04) !important; /* Sutil zoom al pasar el ratón */
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15) !important;
+        transform: scale(1.05) !important; /* ZOOM DINÁMICO SUTIL */
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2) !important;
     }}
 
     .btn-primary > button {{
@@ -173,20 +177,20 @@ st.markdown(f"""
         color: #FFFFFF !important;
         border: none !important;
         font-size: 0.9rem !important;
-        padding: 0.8rem 2rem !important;
+        padding: 0.85rem 2.5rem !important;
     }}
     
     .btn-primary > button:hover {{
         background-color: {gold_bright} !important;
         color: #FFFFFF !important;
-        transform: scale(1.04) !important;
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3) !important;
+        transform: scale(1.05) !important;
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35) !important;
     }}
 
     /* HERO BANNER */
     .hero-section {{
         text-align: center;
-        padding: 3rem 1rem 1rem 1rem;
+        padding: 2.5rem 1rem 1rem 1rem;
     }}
 
     .hero-title {{
@@ -194,7 +198,7 @@ st.markdown(f"""
         font-size: 3.5rem;
         font-weight: 700;
         color: {text_main};
-        line-height: 1.1;
+        line-height: 1.15;
         margin-bottom: 1.5rem;
     }}
 
@@ -280,18 +284,33 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# ÍCONOS SVG MEJORADOS (ALTA CALIDAD)
+# ÍCONOS SVG PROFESIONALES Y BALANZA VECTORIAL ANIMADA
 # ---------------------------------------------------------
 icon_scale_nav = f"""<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17M8 21h8M5 7h14M5 7l-3 6h6l-3-6zM19 7l-3 6h6l-3-6z"/></svg>"""
 
-# Balanza grande para la animación
+# BALANZA PROFESIONAL CON ESTRUCTURA PIVOTANTE EN SVG
 icon_scale_animated = f"""
-<svg class="animated-scale" width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3v17" />
-    <path d="M8 21h8" />
-    <path d="M5 7h14" />
-    <path d="M5 7l-3 6h6l-3-6z" />
-    <path d="M19 7l-3 6h6l-3-6z" />
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Pilar Central Fijo -->
+    <path d="M32 10v42" stroke-width="2.5" />
+    <path d="M18 52h28" stroke-width="3" />
+    <path d="M25 52l7-5 7 5" stroke-width="2" />
+    <circle cx="32" cy="10" r="3.5" fill="{gold_main}" />
+    
+    <!-- Viga Pivotante y Platillos Animados -->
+    <g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <!-- Travesaño Principal -->
+        <path d="M10 16h44" stroke-width="3" />
+        <path d="M32 11v5" stroke-width="2" />
+        
+        <!-- Cadena e Inclinación Izquierda -->
+        <path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5" />
+        <path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.2" stroke-width="2" />
+        
+        <!-- Cadena e Inclinación Derecha -->
+        <path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5" />
+        <path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.2" stroke-width="2" />
+    </g>
 </svg>
 """
 
@@ -320,12 +339,12 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# BALANZA ANIMADA Y BOTÓN DE TEMA (CENTRADO)
+# BALANZA ANIMADA Y BOTÓN DE TEMA CENTRADO
 # ---------------------------------------------------------
-col_left, col_center, col_right = st.columns([4, 2, 4])
+col_left, col_center, col_right = st.columns([2, 4, 2])
 with col_center:
     st.markdown(f'<div class="theme-wrapper">{icon_scale_animated}</div>', unsafe_allow_html=True)
-    st.button(btn_text, on_click=toggle_theme, use_container_width=False)
+    st.button(btn_text, on_click=toggle_theme)
 
 # ---------------------------------------------------------
 # SECCIÓN HERO
@@ -450,12 +469,10 @@ st.markdown(f"""
 # ---------------------------------------------------------
 # SCRIPT DE AUDIO: EFECTO DE CLIC "BAMBÚ" EN BOTONES
 # ---------------------------------------------------------
-# Inyectamos un pequeño script de sonido en la ventana padre (donde viven los botones de Streamlit).
 components.html("""
 <script>
     const doc = window.parent.document;
     
-    // Función para sintetizar un sonido de bambú/madera (percusivo y rápido)
     function playBambooClick() {
         const AudioContext = window.parent.AudioContext || window.parent.webkitAudioContext;
         if (!AudioContext) return;
@@ -464,14 +481,10 @@ components.html("""
         const osc = ctx.createOscillator();
         const gainNode = ctx.createGain();
         
-        // El tipo 'triangle' o 'sine' con una caída rápida de frecuencia emula un golpe de madera
         osc.type = 'triangle';
-        
-        // Empieza agudo y cae rápidamente para dar efecto percusivo
         osc.frequency.setValueAtTime(600, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.05);
         
-        // Envolvente de volumen (ataque rápido, decaimiento rápido)
         gainNode.gain.setValueAtTime(0.8, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
         
@@ -482,7 +495,6 @@ components.html("""
         osc.stop(ctx.currentTime + 0.1);
     }
 
-    // Escuchar los clics globalmente y reproducir sonido si es un botón de Streamlit
     if (!doc.bambooListenerAdded) {
         doc.addEventListener('mousedown', function(e) {
             if (e.target.closest('.stButton > button') || e.target.closest('.btn-primary > button')) {
