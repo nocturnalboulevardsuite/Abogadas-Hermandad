@@ -26,7 +26,7 @@ def toggle_theme():
 is_dark = st.session_state.theme_mode == "dark"
 
 # ---------------------------------------------------------
-# PALETA DE COLORES (BLANCO AMARILLENTO CÁLIDO & DORADO)
+# PALETA DE COLORES (CREMA CÁLIDO Y DORADO)
 # ---------------------------------------------------------
 if is_dark:
     bg_app = "#12110E"
@@ -41,7 +41,7 @@ if is_dark:
     btn_text = "CAMBIAR A TEMA CLARO"
     beam_transform = "rotate(14deg)" # Inclinación suave en modo oscuro
 else:
-    bg_app = "#FAF6E8"        # Blanco amarillento / crema cálido de lujo
+    bg_app = "#FAF6E8"        # Blanco amarillento / crema cálido elegante
     bg_nav = "#FFFFFF"
     bg_card = "#FFFFFF"
     bg_secondary = "#F3EDDF"
@@ -127,22 +127,25 @@ st.markdown(f"""
         color: {gold_bright};
     }}
 
-    /* CONTENEDOR DE LA BALANZA ANIMADA */
+    /* CONTENEDOR DE LA BALANZA ANIMADA Y CENTRADO */
     .theme-wrapper {{
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 1.5rem auto 1rem auto;
+        text-align: center;
     }}
 
-    /* REGLAS PARA EVITAR CUALQUIER RECORTADO DE TEXTO EN EL BOTÓN */
-    .stButton {{
+    /* REGLAS PARA CENTRADO ABSOLUTO DEL BOTÓN */
+    div[data-testid="stButton"] {{
         display: flex !important;
         justify-content: center !important;
+        align-items: center !important;
         width: 100% !important;
+        margin: 0 auto !important;
     }}
 
-    .stButton > button {{
+    div[data-testid="stButton"] > button {{
         background-color: {bg_card} !important;
         color: {text_main} !important;
         border: 1px solid {border_color} !important;
@@ -152,16 +155,17 @@ st.markdown(f"""
         font-weight: 700 !important;
         letter-spacing: 1.5px !important;
         text-transform: uppercase !important;
-        white-space: nowrap !important; /* PREVIENE RECORTE O PUNTOS SUSPENSIVOS */
+        white-space: nowrap !important;
         width: auto !important;
-        min-width: 250px !important;
+        min-width: 260px !important;
         cursor: pointer !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         margin: 0 auto !important;
         box-shadow: 0 2px 10px rgba(0,0,0,0.02) !important;
+        text-align: center !important;
     }}
 
-    .stButton > button:hover {{
+    div[data-testid="stButton"] > button:hover {{
         border-color: {gold_bright} !important;
         color: {gold_bright} !important;
         transform: scale(1.05) !important; /* ZOOM DINÁMICO HOVER */
@@ -280,12 +284,10 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# ELEMENTOS SVG LIMPIOS (SIN COMENTARIOS NI IDENTACIONES)
+# ELEMENTOS SVG LIMPIOS
 # ---------------------------------------------------------
-# Emblemático Logo del Navbar
 nav_logo_svg = f"""<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="{gold_bright}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
 
-# Balanza Vectorial Principal Animada
 main_scale_svg = f"""<svg width="68" height="68" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
 
 icon_alert = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>"""
@@ -313,12 +315,10 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# BALANZA Y BOTÓN DE CAMBIO DE TEMA
+# BALANZA Y BOTÓN DE CAMBIO DE TEMA (CENTRADO TOTAL)
 # ---------------------------------------------------------
-col_l, col_c, col_r = st.columns([2, 4, 2])
-with col_c:
-    st.markdown(f'<div class="theme-wrapper">{main_scale_svg}</div>', unsafe_allow_html=True)
-    st.button(btn_text, on_click=toggle_theme)
+st.markdown(f'<div class="theme-wrapper">{main_scale_svg}</div>', unsafe_allow_html=True)
+st.button(btn_text, on_click=toggle_theme)
 
 # ---------------------------------------------------------
 # HERO PRINCIPAL
@@ -441,38 +441,79 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# SCRIPT DE AUDIO: EFECTO DE CLIC "BAMBÚ" EN BOTONES
+# SCRIPT DE AUDIO: SINTETIZADOR DE IMPACTO DE MADERA NATURAL
 # ---------------------------------------------------------
 components.html("""
 <script>
     const doc = window.parent.document;
     
-    function playBambooClick() {
+    function playWoodClick() {
         const AudioContext = window.parent.AudioContext || window.parent.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
+        const t = ctx.currentTime;
         
-        const osc = ctx.createOscillator();
-        const gainNode = ctx.createGain();
+        // 1. Tono principal de la madera (Caída rápida de frecuencia)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(1050, t);
+        osc1.frequency.exponentialRampToValueAtTime(400, t + 0.035);
         
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.05);
+        gain1.gain.setValueAtTime(0.85, t);
+        gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
         
-        gainNode.gain.setValueAtTime(0.8, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
         
-        osc.connect(gainNode);
-        gainNode.connect(ctx.destination);
+        // 2. Resonancia del bloque de madera (Overtone secundario)
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1600, t);
+        osc2.frequency.exponentialRampToValueAtTime(800, t + 0.02);
         
-        osc.start();
-        osc.stop(ctx.currentTime + 0.1);
+        gain2.gain.setValueAtTime(0.35, t);
+        gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+        
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        
+        // 3. Transitorio de impacto/fricción (ruido filtrado)
+        const bufferSize = Math.floor(ctx.sampleRate * 0.008);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+        }
+        
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1300, t);
+        filter.Q.setValueAtTime(2.5, t);
+        
+        const gainNoise = ctx.createGain();
+        gainNoise.gain.setValueAtTime(0.5, t);
+        gainNoise.gain.exponentialRampToValueAtTime(0.001, t + 0.012);
+        
+        noise.connect(filter);
+        filter.connect(gainNoise);
+        gainNoise.connect(ctx.destination);
+        
+        osc1.start(t);
+        osc1.stop(t + 0.045);
+        osc2.start(t);
+        osc2.stop(t + 0.03);
+        noise.start(t);
     }
 
     if (!doc.bambooListenerAdded) {
         doc.addEventListener('mousedown', function(e) {
             if (e.target.closest('.stButton > button') || e.target.closest('.btn-primary > button')) {
-                playBambooClick();
+                playWoodClick();
             }
         });
         doc.bambooListenerAdded = true;
