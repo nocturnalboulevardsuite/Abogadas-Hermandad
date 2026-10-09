@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ---------------------------------------------------------
-# CONFIGURACIÓN GENERAL
+# CONFIGURACIÓN DE PÁGINA
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Abogadas-Hermandad | Defensa Legal de la Mujer en Chile",
@@ -11,259 +11,321 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# ESTILOS CSS - ESTÉ TICA CÁLIDA (CREMA, BLANCO Y DORADO)
-# Inspirado en Círculo Defensa Legal / Schneider Abogados
+# ESTADO DEL TEMA (MODO CLARO CÁLIDO / MODO OSCURO DORADO)
 # ---------------------------------------------------------
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+if "theme_mode" not in st.session_state:
+    st.session_state.theme_mode = "light"
 
-    /* FORZAR FONDO Y TEXTO EN TODO STREAMLIT (Evita Modo Oscuro) */
+def toggle_theme():
+    if st.session_state.theme_mode == "light":
+        st.session_state.theme_mode = "dark"
+    else:
+        st.session_state.theme_mode = "light"
+
+is_dark = st.session_state.theme_mode == "dark"
+
+# ---------------------------------------------------------
+# VARIABLES DE COLOR (CERO ROJOS - SOLO CREMAS, AMARILLOS Y DORADOS)
+# ---------------------------------------------------------
+if is_dark:
+    bg_app = "#161411"
+    bg_card = "#221E19"
+    bg_secondary = "#2D2720"
+    border_color = "#4D402F"
+    text_main = "#F7F3EA"
+    text_muted = "#C7B9A5"
+    gold_main = "#E0B354"
+    gold_hover = "#F0C868"
+    scale_angle = "rotate(12deg) translateY(4px)" # Balanza baja en modo oscuro
+    status_text = "Modo Oscuro Activo (Balanza Abajo)"
+else:
+    bg_app = "#FAF7F0"
+    bg_card = "#FFFFFF"
+    bg_secondary = "#F4ECE0"
+    border_color = "#EADCC9"
+    text_main = "#2E261F"
+    text_muted = "#7A6D5E"
+    gold_main = "#C5A059"
+    gold_hover = "#A8833D"
+    scale_angle = "rotate(0deg) translateY(0px)" # Balanza sube / nivelada en modo claro
+    status_text = "Modo Claro Activo (Balanza Arriba)"
+
+# ---------------------------------------------------------
+# ESTILOS CSS DINÁMICOS
+# ---------------------------------------------------------
+st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+
+    /* Forzar fondo y tipografía global de Streamlit */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
-    .stApp, body, html {
-        background-color: #FAF7F2 !important;
-        color: #2D251E !important;
+    .stApp, body, html {{
+        background-color: {bg_app} !important;
+        color: {text_main} !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-    }
+        transition: all 0.4s ease-in-out;
+    }}
 
     /* Ocultar elementos nativos de Streamlit */
-    #MainMenu, footer, header, [data-testid="stHeader"] {
+    #MainMenu, footer, header, [data-testid="stHeader"] {{
         visibility: hidden !important;
         height: 0px !important;
-    }
+    }}
 
-    .block-container {
-        padding-top: 0rem !important;
+    .block-container {{
+        padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1150px !important;
-    }
+        max-width: 1120px !important;
+    }}
 
-    /* BARRA SUPERIOR DE ANUNCIO / ENCABEZADO CÁLIDO */
-    .top-bar {
-        background-color: #4A121A;
-        color: #D4AF37;
+    /* BARRA SUPERIOR DORADA */
+    .top-bar {{
+        background-color: {bg_secondary};
+        color: {gold_main};
+        border-bottom: 1px solid {border_color};
         text-align: center;
-        padding: 8px 15px;
+        padding: 10px 15px;
         font-size: 0.82rem;
-        letter-spacing: 1.5px;
+        letter-spacing: 2px;
         text-transform: uppercase;
-        font-weight: 500;
-        margin-bottom: 2rem;
-    }
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }}
 
-    /* TITULAR Y MARCA */
-    .brand-header {
+    /* BOTÓN Y BALANZA DE LA JUSTICIA CON ANIMACIÓN */
+    .theme-toggle-container {{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 1rem;
+    }}
+
+    .scale-icon-box {{
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }}
+
+    .justice-scale-svg {{
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        transform: {scale_angle};
+        transform-origin: center;
+    }}
+
+    /* ENCABEZADO Y BRANDING */
+    .brand-header {{
         text-align: center;
         padding: 1rem 0 2rem 0;
-    }
+    }}
 
-    .brand-title {
+    .brand-title {{
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 3.2rem;
         font-weight: 700;
-        color: #4A121A !important;
+        color: {text_main} !important;
         letter-spacing: 1px;
         margin: 0;
-    }
+    }}
 
-    .brand-subtitle {
+    .brand-subtitle {{
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
+        font-size: 0.88rem;
         text-transform: uppercase;
         letter-spacing: 3px;
-        color: #B8860B !important;
-        margin-top: 0.5rem;
+        color: {gold_main} !important;
+        margin-top: 0.6rem;
         font-weight: 600;
-    }
+    }}
 
-    /* LÍNEA SEPARADORA DORADA */
-    .gold-line {
+    .gold-divider {{
         height: 1px;
-        background: linear-gradient(90deg, rgba(184,134,11,0) 0%, rgba(184,134,11,0.6) 50%, rgba(184,134,11,0) 100%);
+        background: linear-gradient(90deg, rgba(197,160,89,0) 0%, {gold_main} 50%, rgba(197,160,89,0) 100%);
         margin: 2.5rem 0;
-    }
+    }}
 
-    /* HERO BANNER ESTILO BUFETE */
-    .hero-container {
-        background-color: #FFFFFF;
-        border: 1px solid #E8DFD1;
-        border-radius: 4px;
+    /* HERO BANNER */
+    .hero-card {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        border-radius: 8px;
         padding: 3.5rem 2.5rem;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(74, 18, 26, 0.03);
-    }
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }}
 
-    .hero-heading {
+    .hero-title {{
         font-family: 'Playfair Display', serif;
-        font-size: 2.4rem;
-        color: #4A121A !important;
-        font-weight: 600;
+        font-size: 2.5rem;
+        color: {text_main} !important;
+        font-weight: 700;
         line-height: 1.3;
         margin-bottom: 1.2rem;
-    }
+    }}
 
-    .hero-subtext {
-        font-size: 1.05rem;
-        color: #5A4E44 !important;
-        max-width: 800px;
+    .hero-text {{
+        font-size: 1.08rem;
+        color: {text_muted} !important;
+        max-width: 820px;
         margin: 0 auto;
         line-height: 1.7;
-    }
+    }}
 
-    /* INDICADORES / M ÉTRICAS ESTILO CÍRCULO DEFENSA */
-    .stat-card {
-        background: #FDFBF7;
-        border: 1px solid #E8DFD1;
-        border-radius: 4px;
-        padding: 1.5rem 1rem;
-        text-align: center;
-    }
-
-    .stat-number {
-        font-family: 'Playfair Display', serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #4A121A !important;
-    }
-
-    .stat-label {
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #8C7A6B !important;
-        margin-top: 0.3rem;
-    }
-
-    /* TARJETAS DE SERVICIOS */
-    .card-service {
-        background-color: #FFFFFF;
-        border: 1px solid #E8DFD1;
-        border-top: 3px solid #B8860B;
-        border-radius: 4px;
+    /* TARJETAS DE SERVICIO */
+    .service-card {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        border-top: 3px solid {gold_main};
+        border-radius: 6px;
         padding: 2rem 1.5rem;
         height: 100%;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
-    }
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }}
 
-    .card-title {
+    .service-title {{
         font-family: 'Playfair Display', serif;
-        font-size: 1.35rem;
+        font-size: 1.4rem;
         font-weight: 700;
-        color: #4A121A !important;
+        color: {gold_main} !important;
         margin-bottom: 0.8rem;
-    }
+    }}
 
-    .card-desc {
-        font-size: 0.93rem;
-        color: #5A4E44 !important;
+    .service-desc {{
+        font-size: 0.94rem;
+        color: {text_muted} !important;
         line-height: 1.6;
-    }
+    }}
 
-    /* SECCIÓN ABOGADA DIRECTORA */
-    .profile-box {
-        background-color: #FFFFFF;
-        border: 1px solid #E8DFD1;
-        border-radius: 4px;
+    /* TARJETA PROFILE DE LA ABOGADA */
+    .profile-box {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        border-radius: 8px;
         padding: 2.5rem;
-    }
+    }}
 
-    .profile-name {
+    .profile-name {{
         font-family: 'Playfair Display', serif;
         font-size: 2.2rem;
-        color: #4A121A !important;
+        color: {text_main} !important;
         font-weight: 700;
-    }
+    }}
 
-    .profile-title {
-        color: #B8860B !important;
+    .profile-role {{
+        color: {gold_main} !important;
         font-size: 0.88rem;
         text-transform: uppercase;
         letter-spacing: 2px;
         font-weight: 600;
-        margin-bottom: 1.2rem;
-    }
+        margin-bottom: 1rem;
+    }}
 
-    /* ALERTA / URGENCIA */
-    .urgency-banner {
-        background-color: #FFFDF9;
-        border: 1px solid #E8DFD1;
-        border-left: 4px solid #4A121A;
-        padding: 1.2rem 1.5rem;
-        border-radius: 4px;
-        font-size: 0.93rem;
-        color: #4A121A !important;
+    /* CAJA DE URGENCIA AMARILLA/DORADA */
+    .emergency-box {{
+        background-color: {bg_secondary};
+        border: 1px solid {border_color};
+        border-left: 4px solid {gold_main};
+        padding: 1.3rem;
+        border-radius: 6px;
         margin-bottom: 2rem;
-    }
+        font-size: 0.95rem;
+        color: {text_main} !important;
+    }}
 
-    /* FORMULARIO DE CONTACTO PERSONALIZADO */
-    div[data-testid="stForm"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E8DFD1 !important;
-        border-radius: 6px !important;
-        padding: 2rem !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02) !important;
-    }
-
-    /* INPUTS CÁLIDOS */
-    div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
-        background-color: #FAF7F2 !important;
-        border-color: #E8DFD1 !important;
-        color: #2D251E !important;
-    }
-
-    /* BOTÓN ESTILO DORADO LUJO */
-    .stButton > button {
-        background: linear-gradient(135deg, #C5A059 0%, #A8833D 100%) !important;
+    /* BOTONES STREAMLIT */
+    .stButton > button {{
+        background: linear-gradient(135deg, {gold_main} 0%, #A8833D 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
         border-radius: 4px !important;
-        padding: 0.75rem 2rem !important;
-        font-size: 0.95rem !important;
+        padding: 0.7rem 1.8rem !important;
+        font-size: 0.9rem !important;
         font-weight: 600 !important;
         letter-spacing: 1px !important;
         text-transform: uppercase !important;
-        width: 100% !important;
-        box-shadow: 0 3px 10px rgba(168, 131, 61, 0.2) !important;
-    }
+        transition: all 0.3s ease !important;
+    }}
 
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #B8860B 0%, #8C6219 100%) !important;
-        box-shadow: 0 4px 15px rgba(168, 131, 61, 0.3) !important;
-    }
+    .stButton > button:hover {{
+        box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4) !important;
+        transform: translateY(-1px);
+    }}
 
-    /* EXPANDERS (FAQ) */
-    .stExpander {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E8DFD1 !important;
-        border-radius: 4px !important;
-        margin-bottom: 0.5rem !important;
-    }
+    /* FORMULARIO Y CAMPOS */
+    div[data-testid="stForm"] {{
+        background-color: {bg_card} !important;
+        border: 1px solid {border_color} !important;
+        border-radius: 8px !important;
+        padding: 2rem !important;
+    }}
 
-    /* Texto global dentro de parrafos y etiquetas */
-    p, span, label, h1, h2, h3, h4 {
-        color: #2D251E !important;
-    }
+    div[data-baseweb="input"] > div, div[data-baseweb="select"] > div, textarea {{
+        background-color: {bg_app} !important;
+        border-color: {border_color} !important;
+        color: {text_main} !important;
+    }}
 
+    /* PREGUNTAS FRECUENTES */
+    .stExpander {{
+        background-color: {bg_card} !important;
+        border: 1px solid {border_color} !important;
+        border-radius: 6px !important;
+        margin-bottom: 0.6rem !important;
+    }}
+
+    p, span, label, h1, h2, h3, h4 {{
+        color: {text_main} !important;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# BARRA DE ANUNCIO CÁLIDA
+# BARRA SUPERIOR & BOTÓN CON BALANZA ANIMADA
 # ---------------------------------------------------------
 st.markdown("""
     <div class="top-bar">
-        📞 CONSULTA CONFIDENCIAL • ASESORÍA LEGAL CON PERSPECTIVA DE GÉNERO EN TODO CHILE
+        ⚖️ CONSULTA LEGAL CONFIDENCIAL • DEFENSA DE LA MUJER EN TODO CHILE
     </div>
 """, unsafe_allow_html=True)
 
+# Contenedor del Botón e Icono Vectorial de Balanza
+col_space, col_btn = st.columns([3, 1])
+
+with col_btn:
+    # SVG Vectorial de la Balanza de la Justicia (Dorado)
+    scale_svg = f"""
+    <div class="theme-toggle-container">
+        <div class="scale-icon-box">
+            <svg class="justice-scale-svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Base y Pilar Central -->
+                <path d="M12 3v17" />
+                <path d="M8 21h8" />
+                <!-- Barra Horizontal de Equilibrio -->
+                <path d="M5 7h14" />
+                <!-- Platillo Izquierdo -->
+                <path d="M5 7l-3 6h6l-3-6z" />
+                <!-- Platillo Derecho -->
+                <path d="M19 7l-3 6h6l-3-6z" />
+            </svg>
+        </div>
+    </div>
+    """
+    st.markdown(scale_svg, unsafe_allow_html=True)
+    
+    label_btn = "☀️ Modo Claro" if is_dark else "🌙 Modo Oscuro"
+    st.button(label_btn, on_click=toggle_theme, use_container_width=True)
+
 # ---------------------------------------------------------
-# CABECERA Y LOGOTIPO
+# LOGOTIPO Y ENCABEZADO
 # ---------------------------------------------------------
 st.markdown("""
     <div class="brand-header">
         <div class="brand-title">ABOGADAS HERMANDAD</div>
-        <div class="brand-subtitle">Estudio Jurídico Especializado en Derechos de la Mujer</div>
+        <div class="brand-subtitle">Estudio Jurídico de la Mujer & Acompañamiento Integral</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -271,164 +333,153 @@ st.markdown("""
 # HERO PRINCIPAL
 # ---------------------------------------------------------
 st.markdown("""
-    <div class="hero-container">
-        <div class="hero-heading">Defensa jurídica firme, humana y libre de prejuicios</div>
-        <div class="hero-p" style="font-size: 1.05rem; color: #5A4E44; max-width: 820px; margin: 0 auto; line-height: 1.7;">
-            Acompañamos a mujeres en todo Chile frente a situaciones complejas de violencia intrafamiliar, agresiones, vulneración de derechos, acoso laboral y derecho de familia. Tu seguridad y la de tus hijos es nuestra prioridad absoluta.
+    <div class="hero-card">
+        <div class="hero-title">Defensa legal especializada, humana y libre de prejuicios</div>
+        <div class="hero-text">
+            Te acompañamos con rigor técnico y máxima confidencialidad ante situaciones complejas de violencia intrafamiliar, vulneración de derechos, acoso laboral y conflictos de familia en Chile. Tu tranquilidad jurídica es nuestro compromiso.
         </div>
     </div>
 """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# M étricas / Cifras
-m1, m2, m3, m4 = st.columns(4)
-with m1:
-    st.markdown('<div class="stat-card"><div class="stat-number">100%</div><div class="stat-label">Confidencialidad</div></div>', unsafe_allow_html=True)
-with m2:
-    st.markdown('<div class="stat-card"><div class="stat-number">24 hrs</div><div class="stat-label">Respuesta Inmediata</div></div>', unsafe_allow_html=True)
-with m3:
-    st.markdown('<div class="stat-card"><div class="stat-number">Nacional</div><div class="stat-label">Atención en todo Chile</div></div>', unsafe_allow_html=True)
-with m4:
-    st.markdown('<div class="stat-card"><div class="stat-number">Especialistas</div><div class="stat-label">Derecho de la Mujer</div></div>', unsafe_allow_html=True)
-
 # ---------------------------------------------------------
-# ALERTA DE EMERGENCIA / VIF
+# ALERTA DE URGENCIA / VIF
 # ---------------------------------------------------------
-st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("""
-    <div class="urgency-banner">
+    <div class="emergency-box">
         <b>¿Enfrentas una situación de riesgo inminente?</b><br>
-        En caso de violencia intrafamiliar aguda, puedes llamar al <b>Fono Familia de Carabineros (149)</b> o al <b>1455 (SernamEG)</b>. Para representación judicial y solicitud urgente de medidas de protección y alejamiento, estamos preparadas para actuar por ti.
+        En casos de Violencia Intrafamiliar (VIF) aguda, recuerda comunicarte directamente al <b>Fono Familia de Carabineros (149)</b> o al <b>1455 (SernamEG)</b>. Para representación legal express e interposición urgente de medidas de protección y alejamiento, cuenta con nuestro equipo.
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="gold-line"></div>', unsafe_allow_html=True)
+st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # ÁREAS DE PRÁCTICA
 # ---------------------------------------------------------
-st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; color: #4A121A !important; margin-bottom: 2rem;'>Áreas de Práctica & Especialización</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; margin-bottom: 2rem;'>Áreas de Especialización</h2>", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns(3)
+c1, c2, c3 = st.columns(3)
 
-with col1:
+with c1:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Protección VIF y Agresiones</div>
-            <div class="card-desc">
-                Tramitación prioritaria de medidas cautelares de alejamiento, salida del agresor del hogar común, querellas criminales por agresiones físicas, psicológicas y amenazas.
+        <div class="service-card">
+            <div class="service-title">Protección VIF y Agresiones</div>
+            <div class="service-desc">
+                Tramitación prioritaria de medidas cautelares de alejamiento, expulsión del agresor del hogar común, querellas criminales por agresiones físicas, psicológicas y amenazas.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-with col2:
+with c2:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Derecho de Familia</div>
-            <div class="card-desc">
-                Demandas y retención de pensión de alimentos (fondos AFP y bancarios), cuidado personal (tuición), régimen de visitas y divorcios.
+        <div class="service-card">
+            <div class="service-title">Derecho de Familia</div>
+            <div class="service-desc">
+                Demandas de pensión de alimentos, retención de fondos (AFP y cuentas bancarias), cuidado personal (tuición), relación directa y regular (visitas) y divorcios.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-with col3:
+with c3:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Acoso Laboral y Ley Karin</div>
-            <div class="card-desc">
-                Defensa y querellas laborales frente a acoso sexual, acoso laboral en el trabajo, tutela de derechos fundamentales y despidos injustificados por maternidad.
+        <div class="service-card">
+            <div class="service-title">Acoso Laboral y Ley Karin</div>
+            <div class="service-desc">
+                Intervención legal estratégica ante acoso laboral, acoso sexual en el trabajo, tutela de derechos fundamentales y despidos injustificados por maternidad o género.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-col4, col5, col6 = st.columns(3)
+c4, c5, c6 = st.columns(3)
 
-with col4:
+with c4:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Representación Penal a Víctimas</div>
-            <div class="card-desc">
-                Acompañamiento a víctimas de delitos sexuales y violencia. Nos aseguramos de que seas tratada con dignidad durante todo el proceso penal ante Fiscalía.
+        <div class="service-card">
+            <div class="service-title">Representación Penal a Víctimas</div>
+            <div class="service-desc">
+                Acompañamiento a víctimas de delitos sexuales y violencia. Nos aseguramos de que seas tratada con dignidad durante todo el proceso penal ante el Ministerio Público.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-with col5:
+with c5:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Medidas Cautelares de Urgencia</div>
-            <div class="card-desc">
-                Estrategia jurídica para resguardar la seguridad física, emocional y los bienes patrimoniales de forma rápida en los Tribunales de Familia o Garantía.
+        <div class="service-card">
+            <div class="service-title">Medidas de Emergencia</div>
+            <div class="service-desc">
+                Orientación técnica previa a denuncias para resguardar la seguridad física, emocional y patrimonial de ti y de tus hijos en Tribunales de Familia o Garantía.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-with col6:
+with c6:
     st.markdown("""
-        <div class="card-service">
-            <div class="card-title">Asesoría Preventiva</div>
-            <div class="card-desc">
-                Orientación técnica previa a tomar decisiones definitivas: separación de bienes, acuerdos de cuidadores y redacción de estipulaciones sin ambigüedades.
+        <div class="service-card">
+            <div class="service-title">Asesoría Preventiva</div>
+            <div class="service-desc">
+                Revisión de acuerdos, separación de bienes, capitulaciones matrimoniales y orientación en lenguaje claro antes de tomar decisiones judiciales definitivas.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-st.markdown('<div class="gold-line"></div>', unsafe_allow_html=True)
+st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # ABOGADA DIRECTORA
 # ---------------------------------------------------------
-st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; color: #4A121A !important; margin-bottom: 2rem;'>Abogada Directora</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; margin-bottom: 2rem;'>Nuestra Abogada Directora</h2>", unsafe_allow_html=True)
 
-p_col1, p_col2 = st.columns([1, 2])
+col_p1, col_p2 = st.columns([1, 2])
 
-with p_col1:
-    st.markdown("""
-        <div style="background-color: #FAF7F2; border: 1px solid #E8DFD1; border-radius: 4px; height: 100%; min-height: 220px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1.5rem;">
+with col_p1:
+    st.markdown(f"""
+        <div style="background-color: {bg_secondary}; border: 1px solid {border_color}; border-radius: 8px; height: 100%; min-height: 220px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1.5rem;">
             <div>
-                <div style="font-family: Playfair Display, serif; font-size: 1.5rem; color: #4A121A; font-weight: 700;">
+                <div style="font-family: Playfair Display, serif; font-size: 1.6rem; color: {text_main}; font-weight: 700;">
                     María-Francisca Valentina
                 </div>
-                <div style="font-size: 0.85rem; color: #B8860B; text-transform: uppercase; letter-spacing: 1px; margin-top: 0.4rem;">
+                <div style="font-size: 0.85rem; color: {gold_main}; text-transform: uppercase; letter-spacing: 1px; margin-top: 0.4rem; font-weight: 600;">
                     Abogada Litigante
                 </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-with p_col2:
+with col_p2:
     st.markdown("""
         <div class="profile-box">
             <div class="profile-name">María-Francisca Valentina</div>
-            <div class="profile-title">Socia Fundadora & Abogada Directora</div>
-            <p style="color: #5A4E44; line-height: 1.7; font-size: 0.98rem;">
-                Abogada dedicada a la litigación en materias de Familia y Penal, enfocada en la protección integral de los derechos de las mujeres en Chile. 
-                Fundó <b>Abogadas-Hermandad</b> buscando ofrecer un espacio de alta solidez jurídica, libre de revictimización, donde cada clienta reciba una representación clara, cercana y contundente.
+            <div class="profile-role">Abogada Directora & Socia Fundadora</div>
+            <p style="line-height: 1.7; font-size: 0.98rem;">
+                Especialista en litigación familiar y penal con enfoque de derechos humanos y perspectiva de género en Chile. 
+                Fundó <b>Abogadas-Hermandad</b> con la visión de ofrecer una defensa técnica de la más alta exigencia, combinada con contención real y transparencia absoluta para cada clienta.
             </p>
-            <p style="color: #8C7A6B; font-size: 0.88rem; margin-top: 1rem;">
-                📍 Cobertura presencial en la Región Metropolitana y tramitación electrónica coordinada para tribunales de todo Chile.
+            <p style="font-size: 0.88rem; margin-top: 1rem; opacity: 0.8;">
+                • Cobertura en la Región Metropolitana y tramitación electrónica coordinada en tribunales de todo Chile.<br>
+                • Atención presencial previa reserva y reuniones remotas por videollamada cifrada.
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-st.markdown('<div class="gold-line"></div>', unsafe_allow_html=True)
+st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# FORMULARIO DE CONTACTO ELEGANTE
+# FORMULARIO DE CONSULTA
 # ---------------------------------------------------------
-st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; color: #4A121A !important; margin-bottom: 0.5rem;'>Agenda tu Consulta Confidencial</h2>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #8C7A6B; font-size: 0.95rem; margin-bottom: 2rem;'>Tu mensaje será revisado bajo estricto secreto profesional.</p>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 2.2rem; margin-bottom: 0.5rem;'>Agenda tu Consulta Confidencial</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.95rem; margin-bottom: 2rem; opacity: 0.8;'>Tus datos están protegidos bajo estricto secreto profesional.</p>", unsafe_allow_html=True)
 
 with st.form("contact_form", clear_on_submit=True):
     fc1, fc2 = st.columns(2)
     
     with fc1:
         nombre = st.text_input("Nombre completo")
-        telefono = st.text_input("Teléfono o WhatsApp (+56 9...)")
-        region = st.selectbox("Región", [
+        telefono = st.text_input("Teléfono / WhatsApp (+56 9...)")
+        region = st.selectbox("Región de residencia", [
             "Región Metropolitana", "Valparaíso", "Biobío", "Antofagasta", "Coquimbo", 
             "O'Higgins", "Maule", "La Araucanía", "Los Lagos", "Otra región de Chile"
         ])
@@ -443,39 +494,39 @@ with st.form("contact_form", clear_on_submit=True):
             "Derecho Penal / Querellas a Víctimas",
             "Otra consulta legal"
         ])
-        horario = st.text_input("Horario preferente para llamada")
+        horario = st.text_input("Horario preferente de contacto")
 
-    mensaje = st.text_area("Cuéntanos brevemente tu caso (Sin tecnicismos legales)")
+    mensaje = st.text_area("Cuéntanos brevemente tu caso (sin tecnicismos legales)")
     
-    submitted = st.form_submit_button("Enviar Consulta Confidencial →")
+    submitted = st.form_submit_button("Enviar consulta confidencial →")
     
     if submitted:
         if nombre and (telefono or correo):
-            st.success("✅ Tu consulta ha sido enviada con éxito. Nos pondremos en contacto contigo a la brevedad con la mayor discreción.")
+            st.success("✅ Tu consulta ha sido enviada con éxito. Te contactaremos dentro de las próximas 24 horas hábiles con la mayor discreción.")
         else:
-            st.error("Por favor completa tu nombre y al menos una vía de contacto (Teléfono o Correo).")
+            st.error("Por favor completa tu nombre y al menos un método de contacto (Teléfono o Correo).")
 
 # ---------------------------------------------------------
 # PREGUNTAS FRECUENTES
 # ---------------------------------------------------------
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 1.8rem; color: #4A121A !important; margin-bottom: 1.5rem;'>Preguntas Frecuentes</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; font-family: Playfair Display, serif; font-size: 1.8rem; margin-bottom: 1.5rem;'>Preguntas Frecuentes</h2>", unsafe_allow_html=True)
 
-with st.expander("¿Cómo se solicita una medida cautelar de alejamiento inmediata?"):
-    st.write("Se interpone ante el Tribunal de Familia o de Garantía una solicitud de protección por violencia intrafamiliar. El tribunal puede dictar la prohibición de acercamiento y la salida del agresor en plazos muy breves.")
+with st.expander("¿Cómo se solicita una medida cautelar de alejamiento de urgencia?"):
+    st.write("Se tramita ante el Tribunal de Familia o de Garantía. Solicitamos medidas cautelares inmediatas de prohibición de acercamiento y la expulsión del agresor del hogar común para resguardar tu integridad física y emocional.")
 
-with st.expander("¿Qué ocurre si el demandado no paga la pensión de alimentos?"):
-    st.write("Solicitamos la liquidación de la deuda y aplicamos las herramientas de la Ley de Papitos Corazón: arresto nocturno, suspensión de licencia de conducir, retención de devolución de impuestos y fondos de AFP o bancarios.")
+with st.expander("¿Qué acciones existen si no pagan la pensión de alimentos?"):
+    st.write("Solicitamos la liquidación de la deuda y la aplicación de las medidas de la Ley de Papitos Corazón: retención de fondos de AFP o bancarios, suspensión de licencia de conducir, arraigo nacional e inscripción en el Registro Nacional de Deudores.")
 
-with st.expander("¿Cómo funciona la Ley Karin frente al acoso laboral?"):
-    st.write("La Ley Karin exige a las empresas protocolos rigurosos de prevención e investigación ante acoso laboral y sexual. Te orientamos para activar la denuncia interna o accionar judicialmente ante la Inspección del Trabajo y Tribunales Laborales.")
+with st.expander("¿Atienden causas fuera de Santiago?"):
+    st.write("Sí. Gracias a la tramitación electrónica del Poder Judicial en Chile, representamos y coordinamos audiencias para clientas en todo el territorio nacional.")
 
 # ---------------------------------------------------------
-# FOOTER
+# PIE DE PÁGINA
 # ---------------------------------------------------------
-st.markdown('<div class="gold-line"></div>', unsafe_allow_html=True)
-st.markdown("""
-    <div style="text-align: center; font-size: 0.85rem; color: #8C7A6B; padding-bottom: 2rem;">
+st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
+st.markdown(f"""
+    <div style="text-align: center; font-size: 0.85rem; color: {text_muted}; padding-bottom: 2rem;">
         © 2026 <b>Abogadas-Hermandad</b> • Estudio Jurídico de la Mujer en Chile<br>
         <i>Compromiso, Integridad y Defensa Legal Efectiva.</i>
     </div>
