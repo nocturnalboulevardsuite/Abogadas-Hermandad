@@ -238,15 +238,26 @@ st.markdown(f"""
         gap: 10px;
     }}
 
-    /* TARJETAS DE SERVICIO CENTRADAS */
+    /* REGLA DE ESTIRAMIENTO Y SIMETRÍA 100% PERFECTA EN TARJETAS */
+    div[data-testid="stColumn"] {{
+        display: flex !important;
+    }}
+
+    div[data-testid="stColumn"] > div {{
+        width: 100% !important;
+        height: 100% !important;
+    }}
+
     .service-card {{
         background-color: {bg_card};
         border: 1px solid {border_color};
-        padding: 2.5rem 2rem;
+        padding: 2.5rem 1.8rem;
         border-radius: 6px;
         transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
-        height: 100%;
-        text-align: center; /* Alineación de texto centrada */
+        height: 100% !important;
+        min-height: 310px !important; /* ALTURA MÍNIMA SIMÉTRICA IGUAL PARA TODAS */
+        box-sizing: border-box !important;
+        text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -264,20 +275,28 @@ st.markdown(f"""
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 40px;
     }}
 
+    /* IGUALACIÓN DE ALTURA PARA TÍTULOS (1 LÍNEA Y 2 LÍNEAS) */
     .service-title {{
         font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 600;
         color: {text_main};
         margin-bottom: 1rem;
+        min-height: 3.2rem; /* IGUALA EL ESPACIO DE LOS TÍTULOS */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }}
 
     .service-desc {{
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         color: {text_muted};
         line-height: 1.6;
+        margin: 0;
     }}
 
     h1, h2, h3, h4 {{
@@ -359,7 +378,7 @@ st.markdown(f"""
 st.write("---")
 
 # ---------------------------------------------------------
-# ÁREAS DE PRÁCTICA
+# ÁREAS DE PRÁCTICA ( TARJETAS 100% SIMÉTRICAS )
 # ---------------------------------------------------------
 st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.5rem 0;'>Áreas de Especialización</h2>", unsafe_allow_html=True)
 
