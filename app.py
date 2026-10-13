@@ -169,7 +169,7 @@ st.markdown(f"""
     div[data-testid="stButton"] > button:hover {{
         border-color: {gold_bright} !important;
         color: {gold_bright} !important;
-        transform: scale(1.04) !important; /* ZOOM DINÁMICO HOVER */
+        transform: scale(1.04) !important;
         box-shadow: 0 6px 20px rgba(212, 175, 55, 0.22) !important;
     }}
 
@@ -238,7 +238,7 @@ st.markdown(f"""
         gap: 10px;
     }}
 
-    /* TARJETAS DE SERVICIO */
+    /* TARJETAS DE SERVICIO CENTRADAS */
     .service-card {{
         background-color: {bg_card};
         border: 1px solid {border_color};
@@ -246,7 +246,11 @@ st.markdown(f"""
         border-radius: 6px;
         transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
         height: 100%;
-        text-align: left;
+        text-align: center; /* Alineación de texto centrada */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
     }}
 
     .service-card:hover {{
@@ -257,6 +261,9 @@ st.markdown(f"""
 
     .service-icon {{
         margin-bottom: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }}
 
     .service-title {{
