@@ -238,30 +238,53 @@ st.markdown(f"""
         gap: 10px;
     }}
 
-    /* REGLA DE ESTIRAMIENTO Y SIMETRÍA 100% PERFECTA EN TARJETAS */
-    div[data-testid="stColumn"] {{
+    /* REGLA DE SIMETRÍA 100% RIGUROSA EN CONTENEDORES DE COLUMNA */
+    div[data-testid="stHorizontalBlock"] {{
         display: flex !important;
+        align-items: stretch !important;
+        gap: 1.5rem !important;
     }}
 
-    div[data-testid="stColumn"] > div {{
-        width: 100% !important;
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {{
+        flex: 1 1 0px !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div {{
         height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
     }}
 
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] .stMarkdown {{
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] .stMarkdown > div {{
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+
+    /* TARJETAS DENTRO DE COLUMNAS */
     .service-card {{
         background-color: {bg_card};
         border: 1px solid {border_color};
         padding: 2.5rem 1.8rem;
-        border-radius: 6px;
+        border-radius: 8px;
         transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
         height: 100% !important;
-        min-height: 310px !important; /* ALTURA MÍNIMA SIMÉTRICA IGUAL PARA TODAS */
         box-sizing: border-box !important;
         text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        flex: 1 1 auto !important;
     }}
 
     .service-card:hover {{
@@ -275,21 +298,24 @@ st.markdown(f"""
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 40px;
+        height: 48px;
+        width: 100%;
     }}
 
-    /* IGUALACIÓN DE ALTURA PARA TÍTULOS (1 LÍNEA Y 2 LÍNEAS) */
+    /* TÍTULOS Y DESCRIPCIONES DE TARJETAS */
     .service-title {{
         font-family: 'Playfair Display', serif;
         font-size: 1.35rem;
         font-weight: 600;
         color: {text_main};
-        margin-bottom: 1rem;
-        min-height: 3.2rem; /* IGUALA EL ESPACIO DE LOS TÍTULOS */
+        margin-bottom: 1.2rem;
+        min-height: 3.6rem; /* Mantiene idéntico espacio de títulos para 1 o 2 líneas */
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
+        line-height: 1.25;
+        width: 100%;
     }}
 
     .service-desc {{
@@ -297,6 +323,11 @@ st.markdown(f"""
         color: {text_muted};
         line-height: 1.6;
         margin: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        width: 100%;
     }}
 
     h1, h2, h3, h4 {{
@@ -311,16 +342,23 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# ELEMENTOS SVG LIMPIOS
+# ÍCONOS VECTORIALES PROFESIONALES DE ALTA PRECISIÓN
 # ---------------------------------------------------------
 nav_logo_svg = f"""<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="{gold_bright}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
 
 main_scale_svg = f"""<svg width="68" height="68" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
 
 icon_alert = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>"""
-icon_shield = f"""<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>"""
-icon_users = f"""<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>"""
-icon_briefcase = f"""<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>"""
+
+# 1. Escudo de Protección Legal y VIF
+icon_shield_pro = f"""<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v7"/><path d="M9 11h6"/><path d="M9 11l-1.5 3h3L9 11z"/><path d="M15 11l-1.5 3h3L15 11z"/></svg>"""
+
+# 2. Sello de Familia e Integridad de Derechos
+icon_family_pro = f"""<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M9 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M15 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M6.5 16.5v-.5a2.5 2.5 0 0 1 5 0v.5"/><path d="M12.5 16.5v-.5a2.5 2.5 0 0 1 5 0v.5"/></svg>"""
+
+# 3. Maletín Ejecutivo y Tutela Laboral (Ley Karin)
+icon_work_pro = f"""<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v3"/><circle cx="12" cy="13.5" r="2.5"/><path d="M12 11v5"/></svg>"""
+
 icon_check = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>"""
 
 # ---------------------------------------------------------
@@ -378,7 +416,7 @@ st.markdown(f"""
 st.write("---")
 
 # ---------------------------------------------------------
-# ÁREAS DE PRÁCTICA ( TARJETAS 100% SIMÉTRICAS )
+# ÁREAS DE PRÁCTICA ( TARJETAS 100% SIMÉTRICAS Y DIBUJOS MEJORADOS )
 # ---------------------------------------------------------
 st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.5rem 0;'>Áreas de Especialización</h2>", unsafe_allow_html=True)
 
@@ -387,7 +425,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown(f"""
         <div class="service-card">
-            <div class="service-icon">{icon_shield}</div>
+            <div class="service-icon">{icon_shield_pro}</div>
             <div class="service-title">Protección y VIF</div>
             <div class="service-desc">
                 Tramitación prioritaria de medidas cautelares de alejamiento, expulsión del agresor del hogar común y querellas criminales por agresiones.
@@ -398,7 +436,7 @@ with col1:
 with col2:
     st.markdown(f"""
         <div class="service-card">
-            <div class="service-icon">{icon_users}</div>
+            <div class="service-icon">{icon_family_pro}</div>
             <div class="service-title">Derecho de Familia</div>
             <div class="service-desc">
                 Demandas de pensión de alimentos, retención de fondos (AFP y bancos), cuidado personal, relación directa y regular (visitas) y divorcios.
@@ -409,7 +447,7 @@ with col2:
 with col3:
     st.markdown(f"""
         <div class="service-card">
-            <div class="service-icon">{icon_briefcase}</div>
+            <div class="service-icon">{icon_work_pro}</div>
             <div class="service-title">Acoso Laboral (Ley Karin)</div>
             <div class="service-desc">
                 Intervención legal estratégica ante acoso laboral o sexual en el trabajo, tutela de derechos fundamentales y despidos por maternidad.
