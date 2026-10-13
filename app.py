@@ -54,7 +54,7 @@ else:
     beam_transform = "rotate(0deg)"  # Balanza recta equilibrada en modo claro
 
 # ---------------------------------------------------------
-# ESTILOS CSS DINÁMICOS
+# ESTILOS CSS DINÁMICOS Y ANIMACIONES DE CARRUSEL
 # ---------------------------------------------------------
 st.markdown(f"""
     <style>
@@ -349,6 +349,107 @@ st.markdown(f"""
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }}
 
+    /* CARRUSEL INFINITO DE CASOS DE ÉXITO (MARQUEE CSS) */
+    .marquee-container {{
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        position: relative;
+        padding: 1rem 0;
+        mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    }}
+
+    .marquee-track {{
+        display: flex;
+        gap: 1.8rem;
+        width: max-content;
+        animation: marqueeScroll 32s linear infinite;
+    }}
+
+    .marquee-track:hover {{
+        animation-play-state: paused;
+    }}
+
+    @keyframes marqueeScroll {{
+        0% {{ transform: translateX(0); }}
+        100% {{ transform: translateX(-50%); }}
+    }}
+
+    .case-card {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        border-top: 3px solid {gold_bright};
+        border-radius: 8px;
+        padding: 1.8rem;
+        width: 340px;
+        white-space: normal;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }}
+
+    .case-card:hover {{
+        transform: translateY(-4px);
+        border-color: {gold_bright};
+    }}
+
+    .case-badge {{
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: {gold_bright};
+        background-color: rgba(212, 175, 55, 0.12);
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 0.8rem;
+    }}
+
+    .case-title {{
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: {text_main};
+        margin-bottom: 0.6rem;
+    }}
+
+    .case-detail {{
+        font-size: 0.88rem;
+        color: {text_muted};
+        line-height: 1.5;
+    }}
+
+    /* SECCIÓN DE DIPLOMAS Y CERTIFICACIONES */
+    .diploma-card {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.4s ease, border-color 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }}
+
+    .diploma-card:hover {{
+        transform: scale(1.02);
+        border-color: {gold_bright};
+    }}
+
+    .diploma-img {{
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid {border_color};
+        margin-bottom: 1rem;
+    }}
+
     h1, h2, h3, h4 {{
         font-family: 'Playfair Display', serif !important;
         color: {text_main} !important;
@@ -513,6 +614,113 @@ with team_col2:
                     {icon_phone} <span style="font-weight: 500;">+56 9 5492 2730</span>
                 </div>
             </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.write("---")
+
+# ---------------------------------------------------------
+# CARRUSEL CONTINUO: CASOS DE ÉXITO Y SENTENCIAS FAVORABLES
+# ---------------------------------------------------------
+st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin-top: 3rem; margin-bottom: 0.5rem;'>Casos Destacados & Resoluciones</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 1rem; color: #B8B0A1; margin-bottom: 2rem;'>Pasa el cursor sobre una resolución para pausar el carrusel</p>", unsafe_allow_html=True)
+
+cases_html = f"""
+    <div class="marquee-container">
+        <div class="marquee-track">
+            <!-- BLOQUE 1 -->
+            <div class="case-card">
+                <span class="case-badge">Protección & VIF</span>
+                <div class="case-title">Medida Cautelar Urgente 24h</div>
+                <div class="case-detail">Otorgamiento inmediato de prohibición de acercamiento y expulsión del agresor del hogar común en el Juzgado de Familia de Santiago.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Pensión de Alimentos</span>
+                <div class="case-title">Retención 100% Fondos AFP</div>
+                <div class="case-detail">Cobro efectivo de adeudamiento histórico superior a $14.000.000 mediante retención judicial de fondos de capitalización individual.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Tutela Laboral</span>
+                <div class="case-title">Acoso Laboral (Ley Karin)</div>
+                <div class="case-detail">Sentencia favorable con indemnización por vulneración de derechos fundamentales y despido indirecto en sector corporativo.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Derecho de Familia</span>
+                <div class="case-title">Cuidado Personal Definitivo</div>
+                <div class="case-detail">Resolución favorable garantizando el interés superior del niño y régimen de visitas estructurado con evaluación psicológica.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Derecho Penal</span>
+                <div class="case-title">Querella por Lesiones VIF</div>
+                <div class="case-detail">Condena firme dictada por el Tribunal de Juicio Oral en lo Penal con prohibición absoluta de contacto y resguardo policial.</div>
+            </div>
+            <!-- BLOQUE DUPLICADO PARA EFECTO INFINITO CONTINUO -->
+            <div class="case-card">
+                <span class="case-badge">Protección & VIF</span>
+                <div class="case-title">Medida Cautelar Urgente 24h</div>
+                <div class="case-detail">Otorgamiento inmediato de prohibición de acercamiento y expulsión del agresor del hogar común en el Juzgado de Familia de Santiago.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Pensión de Alimentos</span>
+                <div class="case-title">Retención 100% Fondos AFP</div>
+                <div class="case-detail">Cobro efectivo de adeudamiento histórico superior a $14.000.000 mediante retención judicial de fondos de capitalización individual.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Tutela Laboral</span>
+                <div class="case-title">Acoso Laboral (Ley Karin)</div>
+                <div class="case-detail">Sentencia favorable con indemnización por vulneración de derechos fundamentales y despido indirecto en sector corporativo.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Derecho de Familia</span>
+                <div class="case-title">Cuidado Personal Definitivo</div>
+                <div class="case-detail">Resolución favorable garantizando el interés superior del niño y régimen de visitas estructurado con evaluación psicológica.</div>
+            </div>
+            <div class="case-card">
+                <span class="case-badge">Derecho Penal</span>
+                <div class="case-title">Querella por Lesiones VIF</div>
+                <div class="case-detail">Condena firme dictada por el Tribunal de Juicio Oral en lo Penal con prohibición absoluta de contacto y resguardo policial.</div>
+            </div>
+        </div>
+    </div>
+"""
+st.markdown(cases_html, unsafe_allow_html=True)
+
+st.write("---")
+
+# ---------------------------------------------------------
+# DIPLOMAS Y CERTIFICACIONES
+# ---------------------------------------------------------
+st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.5rem 0;'>Diplomas & Certificaciones Academicas</h2>", unsafe_allow_html=True)
+
+dip_col1, dip_col2, dip_col3 = st.columns(3)
+
+with dip_col1:
+    st.markdown(f"""
+        <div class="diploma-card">
+            <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop" class="diploma-img" alt="Diploma 1" />
+            <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Diplomado en Derecho de Familia</h4>
+            <p style="font-size: 0.85rem; color: {gold_bright}; font-weight: 600; margin-bottom: 0.5rem;">UNIVERSIDAD DE CHILE</p>
+            <p style="font-size: 0.85rem; color: {text_muted};">Especialización avanzada en litigación oral y medidas cautelares en tribunales de familia.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with dip_col2:
+    st.markdown(f"""
+        <div class="diploma-card">
+            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop" class="diploma-img" alt="Diploma 2" />
+            <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Certificación Ley Karin y Género</h4>
+            <p style="font-size: 0.85rem; color: {gold_bright}; font-weight: 600; margin-bottom: 0.5rem;">PONTIFICIA UNIV. CATÓLICA</p>
+            <p style="font-size: 0.85rem; color: {text_muted};">Especialista en prevención, tutela de derechos fundamentales y acoso laboral en Chile.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with dip_col3:
+    st.markdown(f"""
+        <div class="diploma-card">
+            <img src="https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=800&auto=format&fit=crop" class="diploma-img" alt="Diploma 3" />
+            <h4 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Postítulo en Derecho Penal & VIF</h4>
+            <p style="font-size: 0.85rem; color: {gold_bright}; font-weight: 600; margin-bottom: 0.5rem;">ACADEMIA JUDICIAL / UDP</p>
+            <p style="font-size: 0.85rem; color: {text_muted};">Estrategia penal defensiva e interposición de querellas criminales por agresiones graves.</p>
         </div>
     """, unsafe_allow_html=True)
 
