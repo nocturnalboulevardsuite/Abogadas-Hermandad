@@ -489,9 +489,8 @@ st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.
 team_col1, team_col2 = st.columns([1, 2])
 
 with team_col1:
-    # Puedes reemplazar esta URL por la ruta o archivo local de tu imagen cuando quieras (ej. "maria_francisca.jpg")
     st.image(
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop", 
+        "fran.jpg", 
         caption="María-Francisca Valentina", 
         use_container_width=True
     )
