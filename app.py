@@ -136,7 +136,8 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    /* REGLAS PARA CENTRADO ABSOLUTO DEL BOTÓN */
+    /* CENTRADO ABSOLUTO DEL BOTÓN Y SU CONTENEDOR STREAMLIT */
+    div[data-testid="stElementContainer"]:has(div[data-testid="stButton"]),
     div[data-testid="stButton"] {{
         display: flex !important;
         justify-content: center !important;
@@ -150,14 +151,14 @@ st.markdown(f"""
         color: {text_main} !important;
         border: 1px solid {border_color} !important;
         border-radius: 6px !important;
-        padding: 0.75rem 2.2rem !important;
+        padding: 0.75rem 1.8rem !important;
         font-size: 0.82rem !important;
         font-weight: 700 !important;
         letter-spacing: 1.5px !important;
         text-transform: uppercase !important;
         white-space: nowrap !important;
-        width: auto !important;
-        min-width: 260px !important;
+        width: 100% !important;
+        max-width: 280px !important;
         cursor: pointer !important;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         margin: 0 auto !important;
@@ -168,7 +169,7 @@ st.markdown(f"""
     div[data-testid="stButton"] > button:hover {{
         border-color: {gold_bright} !important;
         color: {gold_bright} !important;
-        transform: scale(1.05) !important; /* ZOOM DINÁMICO HOVER */
+        transform: scale(1.04) !important; /* ZOOM DINÁMICO HOVER */
         box-shadow: 0 6px 20px rgba(212, 175, 55, 0.22) !important;
     }}
 
@@ -317,8 +318,10 @@ st.markdown(f"""
 # ---------------------------------------------------------
 # BALANZA Y BOTÓN DE CAMBIO DE TEMA (CENTRADO TOTAL)
 # ---------------------------------------------------------
-st.markdown(f'<div class="theme-wrapper">{main_scale_svg}</div>', unsafe_allow_html=True)
-st.button(btn_text, on_click=toggle_theme)
+_, col_center, _ = st.columns([1, 1.2, 1])
+with col_center:
+    st.markdown(f'<div class="theme-wrapper">{main_scale_svg}</div>', unsafe_allow_html=True)
+    st.button(btn_text, on_click=toggle_theme, use_container_width=True)
 
 # ---------------------------------------------------------
 # HERO PRINCIPAL
