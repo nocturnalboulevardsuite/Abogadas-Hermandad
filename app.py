@@ -331,6 +331,24 @@ st.markdown(f"""
         width: 100%;
     }}
 
+    /* TARJETA DE EQUIPO / ABOGADA FUNDADORA */
+    .team-card {{
+        background-color: {bg_card};
+        border: 1px solid {border_color};
+        padding: 2.5rem;
+        border-radius: 8px;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }}
+
+    .team-card:hover {{
+        border-color: {gold_bright};
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }}
+
     h1, h2, h3, h4 {{
         font-family: 'Playfair Display', serif !important;
         color: {text_main} !important;
@@ -347,7 +365,7 @@ st.markdown(f"""
 # ---------------------------------------------------------
 nav_logo_svg = f"""<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="{gold_bright}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
 
-# BALANZA PRINCIPAL CON MARGEN AMPLIO Y OVERFLOW LIBRE (PREVIENE RECORTE DE ENCUADRE)
+# BALANZA PRINCIPAL CON MARGEN AMPLIO Y OVERFLOW LIBRE
 main_scale_svg = f"""<svg width="78" height="74" viewBox="-10 -6 84 76" style="overflow: visible !important;" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
 
 icon_alert = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>"""
@@ -362,6 +380,10 @@ icon_family_pro = f"""<svg width="42" height="42" viewBox="0 0 24 24" fill="none
 icon_work_pro = f"""<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="{gold_main}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v3"/><circle cx="12" cy="13.5" r="2.5"/><path d="M12 11v5"/></svg>"""
 
 icon_check = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>"""
+
+icon_mail = f"""<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>"""
+
+icon_phone = f"""<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>"""
 
 # ---------------------------------------------------------
 # NAVBAR SUPERIOR
@@ -453,6 +475,44 @@ with col3:
             <div class="service-title">Acoso Laboral (Ley Karin)</div>
             <div class="service-desc">
                 Intervención legal estratégica ante acoso laboral o sexual en el trabajo, tutela de derechos fundamentales y despidos por maternidad.
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.write("---")
+
+# ---------------------------------------------------------
+# ABOGADAS ESPECIALISTAS (SECCIÓN DE EQUIPO)
+# ---------------------------------------------------------
+st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.5rem 0;'>Abogadas Especialistas</h2>", unsafe_allow_html=True)
+
+team_col1, team_col2 = st.columns([1, 2])
+
+with team_col1:
+    # Puedes reemplazar esta URL por la ruta o archivo local de tu imagen cuando quieras (ej. "maria_francisca.jpg")
+    st.image(
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop", 
+        caption="María-Francisca Valentina", 
+        use_container_width=True
+    )
+
+with team_col2:
+    st.markdown(f"""
+        <div class="team-card">
+            <h3 style="font-size: 2rem; margin-bottom: 0.2rem;">María-Francisca Valentina</h3>
+            <p style="color: {gold_bright}; font-weight: 700; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.2rem;">
+                Abogada Fundadora
+            </p>
+            <p style="color: {text_muted}; line-height: 1.7; font-size: 1.02rem; margin-bottom: 2rem;">
+                Abogada especialista en violencia de género, familia, penal y laboral. Compromiso técnico y acompañamiento estratégico para la protección integral de tus derechos.
+            </p>
+            <div style="border-top: 1px solid {border_color}; padding-top: 1.5rem; display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 0.98rem;">
+                    {icon_mail} <span style="font-weight: 500;">Lex.Mfrancisca@gmail.com</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 0.98rem;">
+                    {icon_phone} <span style="font-weight: 500;">+56 9 5492 2730</span>
+                </div>
             </div>
         </div>
     """, unsafe_allow_html=True)
