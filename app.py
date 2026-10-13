@@ -127,13 +127,14 @@ st.markdown(f"""
         color: {gold_bright};
     }}
 
-    /* CONTENEDOR DE LA BALANZA ANIMADA Y CENTRADO */
+    /* CONTENEDOR DE LA BALANZA ANIMADA (SIN CORTES) */
     .theme-wrapper {{
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 1.5rem auto 1rem auto;
         text-align: center;
+        overflow: visible !important;
     }}
 
     /* CENTRADO ABSOLUTO DEL BOTÓN Y SU CONTENEDOR STREAMLIT */
@@ -309,7 +310,7 @@ st.markdown(f"""
         font-weight: 600;
         color: {text_main};
         margin-bottom: 1.2rem;
-        min-height: 3.6rem; /* Mantiene idéntico espacio de títulos para 1 o 2 líneas */
+        min-height: 3.6rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -346,7 +347,8 @@ st.markdown(f"""
 # ---------------------------------------------------------
 nav_logo_svg = f"""<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="{gold_bright}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
 
-main_scale_svg = f"""<svg width="68" height="68" viewBox="0 0 64 64" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
+# BALANZA PRINCIPAL CON MARGEN AMPLIO Y OVERFLOW LIBRE (PREVIENE RECORTE DE ENCUADRE)
+main_scale_svg = f"""<svg width="78" height="74" viewBox="-10 -6 84 76" style="overflow: visible !important;" fill="none" stroke="{gold_main}" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10v42M18 52h28M25 52l7-5 7 5" stroke-width="2.5"/><circle cx="32" cy="10" r="3" fill="{gold_main}"/><g style="transform: {beam_transform}; transform-origin: 32px 16px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);"><path d="M10 16h44" stroke-width="3"/><path d="M32 11v5" stroke-width="2"/><path d="M10 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M3 34c0 3.5 3.1 6 7 6s7-2.5 7-6H3z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/><path d="M54 16l-7 18h14l-7-18z" stroke-width="1.5"/><path d="M47 34c0 3.5 3.1 6 7 6s7-2.5 7-6H47z" fill="{gold_main}" fill-opacity="0.25" stroke-width="1.5"/></g></svg>"""
 
 icon_alert = f"""<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{gold_bright}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>"""
 
@@ -416,7 +418,7 @@ st.markdown(f"""
 st.write("---")
 
 # ---------------------------------------------------------
-# ÁREAS DE PRÁCTICA ( TARJETAS 100% SIMÉTRICAS Y DIBUJOS MEJORADOS )
+# ÁREAS DE PRÁCTICA
 # ---------------------------------------------------------
 st.markdown("<h2 style='text-align: center; font-size: 2.5rem; margin: 3rem 0 2.5rem 0;'>Áreas de Especialización</h2>", unsafe_allow_html=True)
 
@@ -520,7 +522,7 @@ components.html("""
         const ctx = new AudioContext();
         const t = ctx.currentTime;
         
-        // 1. Tono principal de la madera (Caída rápida de frecuencia)
+        // 1. Tono principal de la madera
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.type = 'sine';
@@ -533,7 +535,7 @@ components.html("""
         osc1.connect(gain1);
         gain1.connect(ctx.destination);
         
-        // 2. Resonancia del bloque de madera (Overtone secundario)
+        // 2. Resonancia secundaria del bloque de madera
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.type = 'sine';
@@ -546,7 +548,7 @@ components.html("""
         osc2.connect(gain2);
         gain2.connect(ctx.destination);
         
-        // 3. Transitorio de impacto/fricción (ruido filtrado)
+        // 3. Transitorio percusivo
         const bufferSize = Math.floor(ctx.sampleRate * 0.008);
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
