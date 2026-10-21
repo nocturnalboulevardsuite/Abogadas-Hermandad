@@ -15,10 +15,19 @@ st.set_page_config(
 )
 
 # =========================================================
+# DATOS DEL ESTUDIO
+# =========================================================
+PHONE_DISPLAY = "+56 9 5492 2730"
+PHONE_TEL = "+56954922730"
+EMAIL = "Lex.Mfrancisca@gmail.com"
+WA_LINK = "https://wa.me/56954922730?text=Hola%2C%20quisiera%20agendar%20una%20consulta%20confidencial."
+
+
+# =========================================================
 # UTILIDADES
 # =========================================================
 def html(markup: str) -> None:
-    """Renderiza HTML limpiando sangrías (evita que Markdown lo convierta en bloque de código)."""
+    """Renderiza HTML sin sangrías para que Markdown no lo convierta en bloque de código."""
     clean = "\n".join(line.strip() for line in markup.splitlines() if line.strip())
     st.markdown(clean, unsafe_allow_html=True)
 
@@ -26,477 +35,498 @@ def html(markup: str) -> None:
 def image_to_data_uri(path: str):
     if not os.path.exists(path):
         return None
-    ext = os.path.splitext(path)[1].lower().replace(".", "") or "jpeg"
+    ext = os.path.splitext(path)[1].lower().lstrip(".") or "jpeg"
     ext = "jpeg" if ext == "jpg" else ext
     with open(path, "rb") as f:
         return f"data:image/{ext};base64,{base64.b64encode(f.read()).decode()}"
 
 
 # =========================================================
-# ESTADO DEL TEMA
-# =========================================================
-if "theme_mode" not in st.session_state:
-    st.session_state.theme_mode = "light"
-
-
-def toggle_theme():
-    st.session_state.theme_mode = "dark" if st.session_state.theme_mode == "light" else "light"
-
-
-is_dark = st.session_state.theme_mode == "dark"
-
-# =========================================================
-# TOKENS DE DISEÑO
-# =========================================================
-if is_dark:
-    tokens = dict(
-        bg="#14120F", surface="#1C1915", surface2="#25211B", line="#3A332A",
-        ink="#F5F1E8", muted="#B3AA9A", gold="#E2BE62", gold_ink="#E8C774",
-        gold_soft="rgba(226,190,98,0.14)", wine="#E08AA2", wine_soft="rgba(224,138,162,0.10)",
-        nav="rgba(20,18,15,0.72)", shadow="rgba(0,0,0,0.45)",
-    )
-    toggle_label = "☀  Modo claro"
-else:
-    tokens = dict(
-        bg="#FBF8F1", surface="#FFFFFF", surface2="#F4EEE0", line="#E7DDC4",
-        ink="#1F1B16", muted="#6A6155", gold="#C9A23A", gold_ink="#8C6B12",
-        gold_soft="rgba(201,162,58,0.12)", wine="#7A2440", wine_soft="rgba(122,36,64,0.06)",
-        nav="rgba(251,248,241,0.78)", shadow="rgba(60,45,20,0.10)",
-    )
-    toggle_label = "☾  Modo oscuro"
-
-css_vars = ":root{" + "".join(f"--{k.replace('_', '-')}:{v};" for k, v in tokens.items()) + "}"
-
-# =========================================================
-# ESTILOS (CSS plano con variables: sin llaves duplicadas)
+# ESTILOS
+# El tema se cambia en el navegador (sin recargar la página),
+# por eso la balanza puede animarse de forma continua.
 # =========================================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap');
 
-html, body, .stApp, [data-testid="stAppViewContainer"] {
+:root {
+  --bg: #F7F4EC;
+  --surface: #FFFFFF;
+  --surface-2: #EFEADF;
+  --line: #DCD4C3;
+  --line-strong: #C4B89F;
+  --ink: #15202B;
+  --muted: #5D6570;
+  --gold: #B08A33;
+  --gold-ink: #87661C;
+  --gold-soft: rgba(176,138,51,0.10);
+  --wine: #7C2338;
+  --nav: rgba(247,244,236,0.86);
+  --shadow: rgba(21,32,43,0.08);
+  --on-ink: #F7F4EC;
+  --ease: cubic-bezier(.65,0,.35,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --serif: 'Libre Caslon Display', 'Libre Caslon Text', Georgia, serif;
+  --serif-text: 'Libre Caslon Text', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+}
+:root[data-theme="dark"] {
+  --bg: #0E141B;
+  --surface: #141C25;
+  --surface-2: #1A2430;
+  --line: #26323F;
+  --line-strong: #3A4757;
+  --ink: #ECE7DC;
+  --muted: #9AA3AE;
+  --gold: #D4AE5E;
+  --gold-ink: #DDB96B;
+  --gold-soft: rgba(212,174,94,0.10);
+  --wine: #E08497;
+  --nav: rgba(14,20,27,0.84);
+  --shadow: rgba(0,0,0,0.40);
+  --on-ink: #0E141B;
+}
+
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
   background: var(--bg) !important;
   color: var(--ink) !important;
-  font-family: 'Manrope', system-ui, sans-serif !important;
-  transition: background-color .5s ease, color .5s ease;
+  font-family: var(--sans) !important;
+  transition: background-color .8s var(--ease), color .8s var(--ease);
 }
-#MainMenu, footer, header, [data-testid="stHeader"], [data-testid="stToolbar"] { display: none !important; }
-.block-container { padding-top: 5.5rem !important; padding-bottom: 3rem !important; max-width: 1120px !important; }
-::selection { background: var(--gold); color: #1F1B16; }
+#MainMenu, footer, header, [data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
+.block-container { padding-top: 7.5rem !important; padding-bottom: 2rem !important; max-width: 1160px !important; }
+::selection { background: var(--gold); color: #15202B; }
+h1, h2, h3, h4 { font-family: var(--serif) !important; color: var(--ink) !important; font-weight: 400 !important; letter-spacing: -0.01em; }
+p, span, li, label { color: inherit; }
+a { text-decoration: none !important; color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !important; outline-offset: 3px; }
 
-h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif !important; color: var(--ink) !important; letter-spacing: -0.01em; }
-p, label, span, li { color: var(--ink); }
-a { text-decoration: none !important; }
-
-/* ---------- Barra de progreso de lectura ---------- */
-.scroll-progress {
-  position: fixed; top: 0; left: 0; height: 2px; width: 100%;
-  transform-origin: 0 50%; transform: scaleX(var(--progress, 0));
-  background: linear-gradient(90deg, var(--gold), var(--gold-ink));
-  z-index: 1000001; transition: transform .08s linear;
+/* Transiciones de tema en todas las superficies */
+.surface-t, .utility-bar, .site-nav, .practice-row, .case-card, .credential, .contact-panel, .portrait, .theme-switch {
+  transition: background-color .8s var(--ease), border-color .8s var(--ease), color .8s var(--ease);
 }
 
-/* ---------- Navbar ---------- */
-.custom-navbar {
-  position: fixed; top: 0; left: 0; right: 0; height: 74px;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 5%; z-index: 1000000;
-  background: var(--nav);
-  backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
-  border-bottom: 1px solid transparent;
-  transition: height .35s ease, border-color .35s ease, box-shadow .35s ease, background-color .5s ease;
+/* ---------- Barra de emergencia ---------- */
+.utility-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 36px; z-index: 1000001;
+  background: var(--ink); color: var(--on-ink);
+  display: flex; align-items: center; justify-content: center; gap: 1.4rem;
+  font-size: .8rem; font-weight: 500;
 }
-.custom-navbar.is-scrolled { height: 60px; border-color: var(--line); box-shadow: 0 8px 30px var(--shadow); }
-.nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Cormorant Garamond', serif;
-  font-size: 1.45rem; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
-.nav-brand svg { transition: transform .8s cubic-bezier(.34,1.56,.64,1); }
-.nav-brand:hover svg { transform: rotate(-12deg); }
-.nav-links { display: flex; gap: 2rem; align-items: center; }
-.nav-links a { position: relative; font-size: .9rem; font-weight: 600; color: var(--ink) !important; padding: 6px 0; }
-.nav-links a::after { content: ""; position: absolute; left: 0; bottom: 0; height: 1.5px; width: 100%;
-  background: var(--gold); transform: scaleX(0); transform-origin: right; transition: transform .35s ease; }
-.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
-.nav-cta { padding: 9px 18px !important; border-radius: 999px; border: 1px solid var(--gold);
-  color: var(--gold-ink) !important; transition: background-color .3s, color .3s; }
-.nav-cta::after { display: none; }
-.nav-cta:hover { background: var(--gold); color: #1F1B16 !important; }
+.utility-bar span { color: var(--on-ink); opacity: .8; }
+.utility-bar a { color: var(--on-ink) !important; font-weight: 700; border-bottom: 1px solid transparent; transition: border-color .3s; }
+.utility-bar a:hover { border-color: var(--on-ink); }
+
+/* ---------- Navegación ---------- */
+.site-nav {
+  position: fixed; top: 36px; left: 0; right: 0; height: 72px; z-index: 1000000;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 5%;
+  background: var(--nav); border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px);
+  transition: height .5s var(--ease), background-color .8s var(--ease), border-color .8s var(--ease);
+}
+.site-nav.is-scrolled { height: 60px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-name { font-family: var(--serif); font-size: 1.35rem; color: var(--ink); line-height: 1; }
+.brand-sub { display: block; font-family: var(--sans); font-size: .7rem; color: var(--muted); margin-top: 4px; letter-spacing: .04em; }
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-links a.nl { position: relative; font-size: .88rem; font-weight: 500; color: var(--ink); padding: 6px 0; }
+.nav-links a.nl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--gold);
+  transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+.nav-links a.nl:hover::after, .nav-links a.nl.active::after { transform: scaleX(1); }
+.nav-cta { font-size: .86rem; font-weight: 600; padding: 10px 18px; border: 1px solid var(--ink); color: var(--ink);
+  transition: background-color .4s var(--ease), color .4s var(--ease); }
+.nav-cta:hover { background: var(--ink); color: var(--on-ink) !important; }
+
+/* Interruptor de tema */
+.theme-switch { display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 1px solid var(--line-strong);
+  padding: 6px 12px 6px 6px; cursor: pointer; font-family: var(--sans); font-size: .8rem; font-weight: 600; color: var(--ink); }
+.theme-switch .track { width: 34px; height: 18px; border: 1px solid var(--line-strong); position: relative; background: var(--surface-2); }
+.theme-switch .knob { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: var(--gold);
+  transition: transform .6s var(--ease); }
+:root[data-theme="dark"] .theme-switch .knob { transform: translateX(16px); }
+.theme-switch .lbl-dark { display: none; }
+:root[data-theme="dark"] .theme-switch .lbl-dark { display: inline; }
+:root[data-theme="dark"] .theme-switch .lbl-light { display: none; }
 
 /* ---------- Hero ---------- */
-.hero { display: grid; grid-template-columns: 1.35fr 1fr; gap: 3rem; align-items: center; padding: 3.5rem 0 2.5rem; }
-.hero-kicker { display: inline-flex; align-items: center; gap: 10px; font-size: .92rem; font-weight: 600;
-  color: var(--gold-ink); margin-bottom: 1.4rem; }
-.hero-kicker::before { content: ""; width: 34px; height: 1.5px; background: var(--gold); }
-.hero-title { font-family: 'Cormorant Garamond', serif; font-weight: 600; color: var(--ink);
-  font-size: clamp(2.6rem, 5.4vw, 4.4rem); line-height: 1.02; margin: 0 0 1.6rem; }
-.hero-title .line { display: block; overflow: hidden; padding-bottom: .08em; }
-.hero-title .line > span { display: block; color: var(--ink); transform: translateY(105%);
-  animation: lineUp 1s cubic-bezier(.2,.8,.2,1) forwards; }
-.hero-title .line:nth-child(2) > span { animation-delay: .12s; }
-.hero-title .line:nth-child(3) > span { animation-delay: .24s; font-style: italic; color: var(--gold-ink); }
-@keyframes lineUp { to { transform: translateY(0); } }
-.hero-sub { font-size: 1.08rem; color: var(--muted); line-height: 1.75; max-width: 34rem; margin-bottom: 2.2rem;
-  opacity: 0; animation: fadeIn .9s ease .5s forwards; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; opacity: 0; animation: fadeIn .9s ease .7s forwards; }
-@keyframes fadeIn { to { opacity: 1; } }
+.hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 0; border: 1px solid var(--line); background: var(--surface); margin-top: 1.5rem; }
+.hero-copy { padding: 4rem 3.5rem; border-right: 1px solid var(--line); }
+.hero-meta { display: flex; gap: 1rem; align-items: center; font-size: .85rem; color: var(--muted); margin-bottom: 2.2rem; }
+.hero-meta .rule { flex: 0 0 48px; height: 1px; background: var(--gold); transform-origin: left; animation: drawX 1.2s var(--ease) .2s both; }
+.hero-title { font-family: var(--serif); font-size: clamp(2.6rem, 5vw, 4.3rem); line-height: 1.04; color: var(--ink); margin: 0 0 1.8rem; font-weight: 400; }
+.hero-title .ln { display: block; overflow: hidden; }
+.hero-title .ln > span { display: block; transform: translateY(100%); animation: rise 1.1s var(--ease-out) both; }
+.hero-title .ln:nth-child(2) > span { animation-delay: .1s; }
+.hero-title .ln:nth-child(3) > span { animation-delay: .2s; }
+.hero-lead { font-family: var(--serif-text); font-size: 1.08rem; line-height: 1.8; color: var(--muted); max-width: 33rem; margin: 0 0 2.6rem;
+  animation: fade .9s var(--ease) .5s both; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; animation: fade .9s var(--ease) .65s both; }
+.btn { display: inline-flex; align-items: center; gap: 12px; padding: 15px 26px; font-size: .92rem; font-weight: 600; border: 1px solid var(--ink);
+  transition: background-color .45s var(--ease), color .45s var(--ease), border-color .45s var(--ease); }
+.btn-primary { background: var(--ink); color: var(--on-ink) !important; }
+.btn-primary:hover { background: var(--gold); border-color: var(--gold); color: #15202B !important; }
+.btn-secondary { background: transparent; color: var(--ink) !important; border-color: var(--line-strong); }
+.btn-secondary:hover { border-color: var(--ink); }
+.btn .arrow { display: inline-block; width: 18px; height: 1px; background: currentColor; position: relative; transition: width .45s var(--ease); }
+.btn .arrow::after { content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; transform: rotate(45deg); }
+.btn:hover .arrow { width: 26px; }
 
-.btn-solid, .btn-ghost { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px;
-  border-radius: 999px; font-weight: 700; font-size: .95rem; transition: transform .3s, box-shadow .3s, background-color .3s; }
-.btn-solid { background: var(--ink); color: var(--bg) !important; position: relative; overflow: hidden; }
-.btn-solid span { color: var(--bg) !important; position: relative; z-index: 1; }
-.btn-solid::before { content: ""; position: absolute; inset: 0; background: var(--gold);
-  transform: translateY(101%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
-.btn-solid:hover::before { transform: translateY(0); }
-.btn-solid:hover span { color: #1F1B16 !important; }
-.btn-solid:hover { box-shadow: 0 14px 34px var(--shadow); transform: translateY(-2px); }
-.btn-ghost { border: 1px solid var(--line); color: var(--ink) !important; background: var(--surface); }
-.btn-ghost span { color: var(--ink) !important; }
-.btn-ghost:hover { border-color: var(--gold); transform: translateY(-2px); }
+.hero-facts { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); margin-top: 3.2rem; padding-top: 1.6rem; gap: 1rem;
+  animation: fade .9s var(--ease) .8s both; }
+.hero-facts b { display: block; font-family: var(--serif); font-weight: 400; font-size: 1.15rem; color: var(--ink); margin-bottom: 4px; }
+.hero-facts span { font-size: .82rem; color: var(--muted); line-height: 1.5; }
 
-/* Balanza: oscila y se equilibra al cargar */
-.scale-stage { position: relative; display: grid; place-items: center; aspect-ratio: 1; max-width: 400px; margin-left: auto; width: 100%; }
-.scale-stage::before { content: ""; position: absolute; inset: 8%; border-radius: 50%;
-  background: radial-gradient(circle, var(--gold-soft) 0%, transparent 68%);
-  animation: breathe 6s ease-in-out infinite; }
-.scale-stage::after { content: ""; position: absolute; inset: 2%; border-radius: 50%;
-  border: 1px dashed var(--line); animation: spin 60s linear infinite; }
-@keyframes breathe { 50% { transform: scale(1.08); opacity: .75; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-.scale-svg { position: relative; z-index: 1; width: 78%; height: auto; overflow: visible; }
-.scale-beam { transform-origin: 160px 70px; animation: settle 3.2s cubic-bezier(.3,.7,.4,1) .3s both; }
-.scale-pan-l { transform-origin: 50px 72px; animation: counter 3.2s cubic-bezier(.3,.7,.4,1) .3s both; }
-.scale-pan-r { transform-origin: 270px 72px; animation: counter 3.2s cubic-bezier(.3,.7,.4,1) .3s both; }
-@keyframes settle { 0%{transform:rotate(-14deg)} 22%{transform:rotate(10deg)} 42%{transform:rotate(-6deg)}
-  60%{transform:rotate(3.5deg)} 78%{transform:rotate(-1.5deg)} 100%{transform:rotate(0)} }
-@keyframes counter { 0%{transform:rotate(14deg)} 22%{transform:rotate(-10deg)} 42%{transform:rotate(6deg)}
-  60%{transform:rotate(-3.5deg)} 78%{transform:rotate(1.5deg)} 100%{transform:rotate(0)} }
+/* Panel de la balanza */
+.scale-panel { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 2.2rem; background: var(--surface-2);
+  transition: background-color .8s var(--ease); }
+.scale-panel .corner { position: absolute; width: 18px; height: 18px; border-color: var(--gold); border-style: solid; }
+.scale-panel .c1 { top: 16px; left: 16px; border-width: 1px 0 0 1px; }
+.scale-panel .c2 { top: 16px; right: 16px; border-width: 1px 1px 0 0; }
+.scale-panel .c3 { bottom: 16px; left: 16px; border-width: 0 0 1px 1px; }
+.scale-panel .c4 { bottom: 16px; right: 16px; border-width: 0 1px 1px 0; }
+.scale-wrap { flex: 1; display: grid; place-items: center; cursor: pointer; padding: 1rem 0; }
+.scale-svg { width: 88%; max-width: 360px; height: auto; overflow: visible; }
+.scale-svg .stroke { stroke: var(--gold); transition: stroke .8s var(--ease); }
+.scale-svg .fill { fill: var(--gold); transition: fill .8s var(--ease); }
+.scale-svg .pan-fill { fill: var(--gold); fill-opacity: .14; }
+.scale-svg .shadow-line { stroke: var(--line-strong); }
 
-/* ---------- Botón de tema (flotante) ---------- */
-.st-key-theme_btn { position: fixed !important; left: 22px; bottom: 22px; z-index: 1000000; width: auto !important; }
-div[data-testid="stButton"] > button {
-  background: var(--surface) !important; color: var(--ink) !important; border: 1px solid var(--line) !important;
-  border-radius: 999px !important; padding: .6rem 1.2rem !important; font-weight: 600 !important; font-size: .85rem !important;
-  box-shadow: 0 8px 24px var(--shadow) !important; transition: transform .3s, border-color .3s !important;
-}
-div[data-testid="stButton"] > button p { color: var(--ink) !important; }
-div[data-testid="stButton"] > button:hover { border-color: var(--gold) !important; transform: translateY(-2px); }
-div[data-testid="stButton"] > button:focus-visible { outline: 2px solid var(--gold) !important; outline-offset: 3px; }
+/* Brazo y platillos: equilibrio en claro, desbalance en oscuro */
+.beam { transform-origin: 180px 78px; transform: rotate(0deg); transition: transform 1.6s var(--ease); }
+.pan-l { transform-origin: 56px 80px; transition: transform 1.6s var(--ease); }
+.pan-r { transform-origin: 304px 80px; transition: transform 1.6s var(--ease); }
+:root[data-theme="dark"] .beam { transform: rotate(-13deg); }
+:root[data-theme="dark"] .pan-l, :root[data-theme="dark"] .pan-r { transform: rotate(13deg); }
+.scale-state { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line-strong); padding-top: 1rem;
+  font-size: .8rem; color: var(--muted); }
+.scale-state .s-dark { display: none; }
+:root[data-theme="dark"] .scale-state .s-dark { display: inline; }
+:root[data-theme="dark"] .scale-state .s-light { display: none; }
+.scale-state .angle { font-family: var(--serif); font-size: 1rem; color: var(--ink); }
 
-/* ---------- Franja de urgencia ---------- */
-.urgent { display: grid; grid-template-columns: auto 1fr auto; gap: 1.5rem; align-items: center;
-  background: var(--wine-soft); border: 1px solid var(--line); border-left: 3px solid var(--wine);
-  border-radius: 14px; padding: 1.4rem 1.8rem; margin: 1rem 0 2rem; }
-.urgent-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--wine); position: relative; }
-.urgent-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--wine);
-  animation: ping 1.8s cubic-bezier(0,0,.2,1) infinite; }
-@keyframes ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
-.urgent h4 { font-family: 'Manrope', sans-serif !important; font-size: 1.02rem !important; margin: 0 0 .25rem !important; font-weight: 700; }
-.urgent p { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.6; }
-.urgent-phones { display: flex; gap: 10px; }
-.phone-chip { display: flex; flex-direction: column; align-items: center; min-width: 86px; padding: 8px 14px;
-  border-radius: 12px; background: var(--surface); border: 1px solid var(--line); transition: border-color .3s, transform .3s; }
-.phone-chip:hover { border-color: var(--wine); transform: translateY(-2px); }
-.phone-chip b { font-size: 1.3rem; color: var(--wine) !important; font-family: 'Cormorant Garamond', serif; }
-.phone-chip small { font-size: .72rem; color: var(--muted) !important; }
+@keyframes rise { to { transform: translateY(0); } }
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes drawX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-/* ---------- Encabezados de sección ---------- */
-.section { padding: 4.5rem 0 1rem; scroll-margin-top: 80px; }
-.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; margin-bottom: 2.4rem; }
-.section-head h2 { font-size: clamp(2.1rem, 3.6vw, 3rem) !important; margin: 0 !important; line-height: 1.05; font-weight: 600; }
-.section-head p { color: var(--muted); max-width: 26rem; margin: 0; line-height: 1.65; font-size: .97rem; }
+/* ---------- Secciones ---------- */
+.section { padding: 6rem 0 0; scroll-margin-top: 120px; }
+.sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 2.6rem; }
+.sec-head h2 { font-size: clamp(2.1rem, 3.6vw, 3.1rem) !important; line-height: 1.05; margin: 0 !important; }
+.sec-head p { font-family: var(--serif-text); color: var(--muted); line-height: 1.75; font-size: 1rem; margin: 0; max-width: 30rem; justify-self: end; }
+.sec-rule { height: 1px; background: var(--line-strong); margin-bottom: 0; transform-origin: left; transform: scaleX(0); transition: transform 1.4s var(--ease); }
+.sec-rule.in { transform: scaleX(1); }
 
-/* ---------- Áreas: tarjetas con foco de luz que sigue al cursor ---------- */
-.areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
-.service-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 18px; padding: 2.2rem 1.9rem 2rem; transition: border-color .4s, transform .4s; }
-.service-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
-  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), var(--gold-soft), transparent 60%);
-  transition: opacity .4s; }
-.service-card:hover::before { opacity: 1; }
-.service-card:hover { border-color: var(--gold); transform: translateY(-4px); }
-.service-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center;
-  background: var(--gold-soft); margin-bottom: 1.5rem; position: relative; }
-.service-card h3 { font-size: 1.65rem !important; margin: 0 0 .7rem !important; font-weight: 600; position: relative; }
-.service-card p { color: var(--muted); font-size: .94rem; line-height: 1.7; margin: 0 0 1.4rem; position: relative; }
-.service-card ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); padding-top: 1rem; position: relative; }
-.service-card li { font-size: .86rem; color: var(--ink); padding: 5px 0 5px 20px; position: relative; }
-.service-card li::before { content: ""; position: absolute; left: 0; top: 13px; width: 10px; height: 1.5px; background: var(--gold); }
+/* Áreas de práctica: filas tipo índice */
+.practice { border-bottom: 1px solid var(--line-strong); }
+.practice-row { position: relative; display: grid; grid-template-columns: 64px 1.1fr 1.6fr 40px; gap: 2rem; align-items: start;
+  padding: 2.2rem 1.4rem; border-top: 1px solid var(--line); overflow: hidden; }
+.practice-row:first-child { border-top: none; }
+.practice-row::before { content: ""; position: absolute; inset: 0; background: var(--surface); transform: scaleY(0); transform-origin: bottom;
+  transition: transform .6s var(--ease); z-index: 0; }
+.practice-row::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--gold);
+  transform: scaleY(0); transform-origin: top; transition: transform .6s var(--ease); }
+.practice-row:hover::before, .practice-row:hover::after { transform: scaleY(1); }
+.practice-row > * { position: relative; z-index: 1; }
+.p-icon { width: 48px; height: 48px; border: 1px solid var(--line-strong); display: grid; place-items: center; transition: border-color .6s var(--ease); }
+.practice-row:hover .p-icon { border-color: var(--gold); }
+.p-icon svg { stroke: var(--gold-ink); }
+.practice-row h3 { font-size: 1.75rem !important; margin: .2rem 0 0 !important; line-height: 1.15; }
+.p-body p { font-family: var(--serif-text); color: var(--muted); line-height: 1.75; font-size: .97rem; margin: 0 0 1rem; }
+.p-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.p-tags span { font-size: .78rem; font-weight: 500; color: var(--ink); border: 1px solid var(--line); padding: 5px 10px; }
+.p-go { justify-self: end; margin-top: .6rem; width: 36px; height: 36px; border: 1px solid var(--line-strong); display: grid; place-items: center;
+  transition: background-color .5s var(--ease), border-color .5s var(--ease); }
+.p-go i { display: block; width: 8px; height: 8px; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); transform: rotate(45deg); margin-left: -3px; }
+.practice-row:hover .p-go { background: var(--ink); border-color: var(--ink); }
+.practice-row:hover .p-go i { border-color: var(--on-ink); }
 
-/* ---------- Proceso ---------- */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line); position: relative; }
-.steps::before { content: ""; position: absolute; top: -1px; left: 0; height: 2px; width: 100%; background: var(--gold);
-  transform: scaleX(0); transform-origin: left; transition: transform 1.6s cubic-bezier(.2,.8,.2,1); }
-.steps.in::before { transform: scaleX(1); }
-.step { padding: 2rem 2rem 0 0; }
-.step-n { font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; line-height: 1; color: var(--gold-ink); font-weight: 600; }
-.step h4 { font-family: 'Manrope', sans-serif !important; font-size: 1.05rem !important; margin: .8rem 0 .5rem !important; font-weight: 700; }
-.step p { color: var(--muted); font-size: .92rem; line-height: 1.7; margin: 0; }
+/* Proceso */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line-strong); }
+.step { padding: 2.2rem 2.2rem 0 0; position: relative; }
+.step::before { content: ""; position: absolute; top: -1px; left: 0; height: 2px; width: 100%; background: var(--gold);
+  transform: scaleX(0); transform-origin: left; transition: transform 1s var(--ease); }
+.step.in::before { transform: scaleX(1); }
+.step:nth-child(2)::before { transition-delay: .35s; }
+.step:nth-child(3)::before { transition-delay: .7s; }
+.step-n { font-family: var(--serif); font-size: .95rem; color: var(--gold-ink); margin-bottom: 1.2rem; }
+.step h4 { font-size: 1.5rem !important; margin: 0 0 .7rem !important; }
+.step p { font-family: var(--serif-text); color: var(--muted); font-size: .95rem; line-height: 1.75; margin: 0; }
 
-/* ---------- Equipo ---------- */
-.team { display: grid; grid-template-columns: 0.9fr 1.3fr; gap: 3rem; align-items: center; }
-.portrait { position: relative; border-radius: 22px; overflow: hidden; aspect-ratio: 4/5; background: var(--surface2); }
-.portrait img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
-.portrait:hover img { transform: scale(1.05); }
-.portrait::after { content: ""; position: absolute; inset: 12px; border: 1px solid rgba(255,255,255,.45); border-radius: 14px; pointer-events: none; }
-.monogram { width: 100%; height: 100%; display: grid; place-items: center; font-family: 'Cormorant Garamond', serif;
-  font-size: 6rem; color: var(--gold-ink); }
-.team-role { color: var(--gold-ink); font-weight: 700; font-size: .95rem; margin-bottom: .4rem; }
-.team h3 { font-size: clamp(2.2rem, 4vw, 3.1rem) !important; margin: 0 0 1.2rem !important; line-height: 1.05; font-weight: 600; }
-.team-bio { color: var(--muted); line-height: 1.8; font-size: 1.02rem; margin-bottom: 1.6rem; }
-.quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.45rem; line-height: 1.4;
-  color: var(--ink); border-left: 2px solid var(--gold); padding-left: 1.2rem; margin: 0 0 2rem; }
-.contact-row { display: flex; flex-wrap: wrap; gap: 12px; }
-.contact-pill { display: inline-flex; align-items: center; gap: 10px; padding: 11px 18px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--surface); color: var(--ink) !important; font-weight: 600; font-size: .92rem;
-  transition: border-color .3s, transform .3s; }
-.contact-pill span { color: var(--ink) !important; }
-.contact-pill:hover { border-color: var(--gold); transform: translateY(-2px); }
+/* Equipo */
+.team { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 0; border: 1px solid var(--line); background: var(--surface); }
+.portrait { position: relative; aspect-ratio: 4/5; overflow: hidden; background: var(--surface-2); border-right: 1px solid var(--line); }
+.portrait img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.05); transform: scale(1.02);
+  transition: filter 1.2s var(--ease), transform 1.6s var(--ease); }
+.team:hover .portrait img { filter: grayscale(0%); transform: scale(1); }
+.monogram { width: 100%; height: 100%; display: grid; place-items: center; font-family: var(--serif); font-size: 6rem; color: var(--gold-ink); }
+.team-body { padding: 3.5rem; display: flex; flex-direction: column; justify-content: center; }
+.team-role { font-size: .85rem; font-weight: 600; color: var(--gold-ink); margin-bottom: .8rem; }
+.team-body h3 { font-size: clamp(2.2rem, 3.8vw, 3rem) !important; margin: 0 0 1.4rem !important; line-height: 1.05; }
+.team-bio { font-family: var(--serif-text); color: var(--muted); line-height: 1.85; font-size: 1rem; margin: 0 0 1.8rem; }
+.team-quote { font-family: var(--serif-text); font-style: italic; font-size: 1.15rem; line-height: 1.6; color: var(--ink);
+  border-left: 2px solid var(--gold); padding-left: 1.3rem; margin: 0 0 2.2rem; }
+.team-areas { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); }
+.team-areas div { padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: .88rem; color: var(--ink); }
+.team-areas div:nth-child(odd) { padding-right: 1rem; }
 
-/* ---------- Carrusel de casos ---------- */
-.marquee { overflow: hidden; padding: .8rem 0 1.4rem;
-  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-.marquee-track { display: flex; gap: 1.2rem; width: max-content; animation: marquee 45s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-@keyframes marquee { to { transform: translateX(calc(-50% - .6rem)); } }
-.case-card { width: 330px; flex-shrink: 0; white-space: normal; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 18px; padding: 1.7rem; transition: border-color .3s, transform .3s; }
-.case-card:hover { border-color: var(--gold); transform: translateY(-4px); }
-.case-badge { display: inline-block; font-size: .76rem; font-weight: 700; color: var(--gold-ink) !important;
-  background: var(--gold-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: 1rem; }
-.case-card h4 { font-size: 1.4rem !important; margin: 0 0 .5rem !important; font-weight: 600; }
-.case-card p { color: var(--muted); font-size: .88rem; line-height: 1.65; margin: 0; }
-.disclaimer { text-align: center; font-size: .8rem; color: var(--muted); margin-top: .4rem; }
+/* Casos: carrusel continuo sobrio */
+.cases { overflow: hidden; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+.cases-track { display: flex; width: max-content; animation: slide 60s linear infinite; }
+.cases:hover .cases-track { animation-play-state: paused; }
+@keyframes slide { to { transform: translateX(-50%); } }
+.case-card { width: 360px; flex-shrink: 0; white-space: normal; padding: 2.2rem 2rem; border-right: 1px solid var(--line); background: transparent; }
+.case-card:hover { background: var(--surface); }
+.case-cat { font-size: .78rem; font-weight: 600; color: var(--gold-ink); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+.case-cat::before { content: ""; width: 16px; height: 1px; background: var(--gold); }
+.case-card h4 { font-size: 1.45rem !important; margin: 0 0 .7rem !important; line-height: 1.2; }
+.case-card p { font-family: var(--serif-text); font-size: .9rem; color: var(--muted); line-height: 1.7; margin: 0; }
+.note { font-size: .78rem; color: var(--muted); margin-top: 1rem; }
 
-/* ---------- Diplomas ---------- */
-.diplomas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
-.diploma-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; transition: border-color .4s; }
-.diploma-card:hover { border-color: var(--gold); }
-.diploma-img { height: 190px; overflow: hidden; }
-.diploma-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(35%) sepia(15%);
-  transition: transform 1s cubic-bezier(.2,.8,.2,1), filter .6s; }
-.diploma-card:hover .diploma-img img { transform: scale(1.07); filter: none; }
-.diploma-body { padding: 1.4rem 1.5rem 1.6rem; }
-.diploma-body small { color: var(--gold-ink) !important; font-weight: 700; font-size: .8rem; }
-.diploma-body h4 { font-size: 1.4rem !important; margin: .35rem 0 .5rem !important; font-weight: 600; line-height: 1.15; }
-.diploma-body p { color: var(--muted); font-size: .88rem; line-height: 1.65; margin: 0; }
+/* Formación */
+.credentials { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); background: var(--surface); }
+.credential { border-right: 1px solid var(--line); }
+.credential:last-child { border-right: none; }
+.cred-img { height: 200px; overflow: hidden; border-bottom: 1px solid var(--line); }
+.cred-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 1s var(--ease), transform 1.4s var(--ease); }
+.credential:hover .cred-img img { filter: grayscale(0%); transform: scale(1.04); }
+.cred-body { padding: 1.8rem; }
+.cred-body small { font-size: .78rem; font-weight: 600; color: var(--gold-ink); }
+.cred-body h4 { font-size: 1.35rem !important; margin: .5rem 0 .6rem !important; line-height: 1.2; }
+.cred-body p { font-family: var(--serif-text); color: var(--muted); font-size: .9rem; line-height: 1.7; margin: 0; }
 
-/* ---------- Formulario ---------- */
-[data-testid="stForm"] { background: var(--surface) !important; border: 1px solid var(--line) !important;
-  border-radius: 22px !important; padding: 2.2rem 2.2rem 1.6rem !important; box-shadow: 0 24px 60px var(--shadow); }
-[data-testid="stForm"] label p { font-weight: 600 !important; font-size: .88rem !important; color: var(--ink) !important; }
+/* Contacto */
+.contact-panel { background: var(--ink); color: var(--on-ink); padding: 2.6rem; height: 100%; display: flex; flex-direction: column; gap: 1.6rem; }
+.contact-panel h3 { color: var(--on-ink) !important; font-size: 2rem !important; margin: 0 !important; line-height: 1.1; }
+.contact-panel p { font-family: var(--serif-text); color: var(--on-ink); opacity: .78; line-height: 1.75; margin: 0; font-size: .95rem; }
+.c-line { display: flex; flex-direction: column; gap: 4px; padding: 1rem 0; border-top: 1px solid rgba(127,127,127,.35); }
+.c-line small { font-size: .76rem; opacity: .65; color: var(--on-ink); }
+.c-line a { color: var(--on-ink) !important; font-size: 1.02rem; font-weight: 600; transition: color .4s var(--ease); }
+.c-line a:hover { color: var(--gold) !important; }
+.c-lock { display: flex; gap: 10px; align-items: flex-start; font-size: .82rem; color: var(--on-ink); opacity: .8; margin-top: auto; line-height: 1.6; }
+
+[data-testid="stForm"] { background: var(--surface) !important; border: 1px solid var(--line) !important; border-radius: 0 !important; padding: 2.4rem !important;
+  transition: background-color .8s var(--ease), border-color .8s var(--ease); }
+[data-testid="stForm"] label p { font-family: var(--sans) !important; font-weight: 600 !important; font-size: .82rem !important; color: var(--ink) !important; }
 [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea, [data-baseweb="select"] > div {
-  background: var(--bg) !important; color: var(--ink) !important; border-radius: 12px !important;
-  border: 1px solid var(--line) !important; transition: border-color .3s, box-shadow .3s; }
+  background: var(--bg) !important; color: var(--ink) !important; border-radius: 0 !important; border: 1px solid var(--line) !important;
+  font-family: var(--sans) !important; transition: border-color .4s var(--ease), background-color .8s var(--ease); }
+[data-testid="stTextInput"] input::placeholder, [data-testid="stTextArea"] textarea::placeholder { color: var(--muted) !important; opacity: .7; }
+[data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus { border-color: var(--gold) !important; box-shadow: none !important; }
+[data-testid="stTextInput"] > div > div, [data-testid="stTextArea"] > div > div { border: none !important; background: transparent !important; border-radius: 0 !important; }
 [data-baseweb="select"] span, [data-baseweb="select"] div { color: var(--ink) !important; }
-[data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus {
-  border-color: var(--gold) !important; box-shadow: 0 0 0 3px var(--gold-soft) !important; }
-[data-testid="stTextInput"] > div > div, [data-testid="stTextArea"] > div > div { border: none !important; background: transparent !important; }
+[data-baseweb="popover"] ul, [data-baseweb="popover"] li { background: var(--surface) !important; color: var(--ink) !important; }
 [data-testid="stFormSubmitButton"] > button {
-  background: var(--ink) !important; color: var(--bg) !important; border: none !important; border-radius: 999px !important;
-  padding: .85rem 2.2rem !important; font-weight: 700 !important; transition: transform .3s, box-shadow .3s, background-color .3s !important; }
-[data-testid="stFormSubmitButton"] > button p { color: var(--bg) !important; }
-[data-testid="stFormSubmitButton"] > button:hover { background: var(--gold) !important; transform: translateY(-2px); box-shadow: 0 14px 34px var(--shadow) !important; }
-[data-testid="stFormSubmitButton"] > button:hover p { color: #1F1B16 !important; }
-.form-note { display: flex; gap: 10px; align-items: center; justify-content: center; color: var(--muted); font-size: .88rem; margin-top: 1rem; }
-.success { display: flex; gap: 12px; align-items: center; padding: 1rem 1.2rem; border-radius: 12px; margin-top: 1rem;
-  background: rgba(46,139,87,.10); border: 1px solid rgba(46,139,87,.35); color: #2E8B57; font-weight: 600;
-  animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
-.success span { color: #2E8B57 !important; }
-@keyframes pop { from { transform: scale(.94); opacity: 0; } }
+  width: 100%; background: var(--ink) !important; color: var(--on-ink) !important; border: 1px solid var(--ink) !important; border-radius: 0 !important;
+  padding: .95rem 2rem !important; font-weight: 600 !important; transition: background-color .45s var(--ease), border-color .45s var(--ease) !important; }
+[data-testid="stFormSubmitButton"] > button p { color: var(--on-ink) !important; font-family: var(--sans) !important; }
+[data-testid="stFormSubmitButton"] > button:hover { background: var(--gold) !important; border-color: var(--gold) !important; }
+[data-testid="stFormSubmitButton"] > button:hover p { color: #15202B !important; }
+.success { display: flex; gap: 12px; align-items: center; padding: 1rem 1.2rem; margin-top: 1rem; border: 1px solid #2E8B57; border-left-width: 3px;
+  color: #2E8B57; font-weight: 600; font-size: .92rem; animation: fade .6s var(--ease) both; }
 
-/* ---------- Footer ---------- */
-.site-footer { margin-top: 5rem; padding: 2.5rem 0 1rem; border-top: 1px solid var(--line);
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; color: var(--muted); font-size: .88rem; }
-.site-footer b { color: var(--ink); font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; }
-.site-footer span { color: var(--muted); }
+/* Footer */
+.site-footer { margin-top: 6rem; border-top: 1px solid var(--line-strong); padding: 2.4rem 0 1rem;
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem; font-size: .86rem; color: var(--muted); }
+.site-footer b { display: block; font-family: var(--serif); font-weight: 400; font-size: 1.3rem; color: var(--ink); margin-bottom: .4rem; }
+.site-footer a { color: var(--ink); }
+.site-footer a:hover { color: var(--gold-ink); }
+.footer-col div { margin-bottom: .4rem; }
 
-/* ---------- WhatsApp flotante ---------- */
-.wa-float { position: fixed; right: 22px; bottom: 22px; z-index: 1000000; width: 58px; height: 58px; border-radius: 50%;
-  background: #25D366; display: grid; place-items: center; box-shadow: 0 12px 30px rgba(37,211,102,.35);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
-.wa-float:hover { transform: scale(1.1) rotate(-6deg); }
-.wa-float::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #25D366;
-  animation: ping 2.4s cubic-bezier(0,0,.2,1) infinite; }
+/* WhatsApp */
+.wa-float { position: fixed; right: 24px; bottom: 24px; z-index: 1000000; display: flex; align-items: center; gap: 10px;
+  background: var(--ink); color: var(--on-ink) !important; padding: 12px 16px; font-size: .85rem; font-weight: 600;
+  border: 1px solid var(--ink); box-shadow: 0 14px 34px var(--shadow); transition: background-color .45s var(--ease), color .45s var(--ease); }
+.wa-float svg { fill: #25D366; }
+.wa-float:hover { background: var(--surface); color: var(--ink) !important; }
 
-/* ---------- Revelado al hacer scroll (solo si JS está activo) ---------- */
-.js-reveal .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
-.js-reveal .reveal.in { opacity: 1; transform: none; }
+/* Revelado al hacer scroll (sobrio) */
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.js .reveal.in { opacity: 1; transform: none; }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .hero, .team { grid-template-columns: 1fr; gap: 2rem; }
-  .scale-stage { max-width: 260px; margin: 0 auto; order: -1; }
-  .areas, .diplomas, .steps { grid-template-columns: 1fr; }
-  .nav-links a:not(.nav-cta) { display: none; }
-  .urgent { grid-template-columns: auto 1fr; }
-  .urgent-phones { grid-column: 1 / -1; }
-  .section-head { flex-direction: column; align-items: flex-start; gap: .8rem; }
-  .step { padding-right: 0; }
+/* Responsive */
+@media (max-width: 960px) {
+  .hero, .team, .credentials { grid-template-columns: 1fr; }
+  .hero-copy { padding: 2.6rem 1.6rem; border-right: none; border-bottom: 1px solid var(--line); }
+  .portrait { border-right: none; border-bottom: 1px solid var(--line); aspect-ratio: 1; }
+  .team-body { padding: 2.2rem 1.6rem; }
+  .credential { border-right: none; border-bottom: 1px solid var(--line); }
+  .sec-head { grid-template-columns: 1fr; gap: 1rem; }
+  .sec-head p { justify-self: start; }
+  .practice-row { grid-template-columns: 48px 1fr; gap: 1rem 1.2rem; }
+  .practice-row .p-body { grid-column: 1 / -1; }
+  .p-go { display: none; }
+  .steps { grid-template-columns: 1fr; }
+  .step { padding-right: 0; padding-bottom: 1.6rem; }
+  .nav-links a.nl { display: none; }
+  .hero-facts { grid-template-columns: 1fr; }
+  .site-footer { grid-template-columns: 1fr; }
+  .utility-bar { gap: .8rem; font-size: .74rem; }
+  .utility-bar .hide-sm { display: none; }
+  .wa-float span { display: none; }
 }
 
-/* ---------- Accesibilidad: movimiento reducido ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .hero-title .line > span { transform: none; }
-  .hero-sub, .hero-actions { opacity: 1; }
-  .js-reveal .reveal { opacity: 1; transform: none; }
+  .js .reveal { opacity: 1; transform: none; }
 }
 """
-
-st.markdown(f"<style>{css_vars}{CSS}</style>", unsafe_allow_html=True)
+st.markdown(f"<style>{CSS}</style>", unsafe_allow_html=True)
 
 # =========================================================
 # ÍCONOS
 # =========================================================
-G = tokens["gold"]
-GI = tokens["gold_ink"]
+def icon(paths: str, size: int = 24) -> str:
+    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke-width="1.5" '
+            f'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{paths}</svg>')
 
-nav_logo_svg = f"""<svg width="32" height="32" viewBox="0 0 36 36" fill="none" stroke="{G}" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="16" stroke-width="1.5"/><path d="M18 9v18M12 27h12M11 14h14M11 14l-3 8h6l-3-8zM25 14l-3 8h6l-3-8z" stroke-width="1.5"/></svg>"""
-
-hero_scale_svg = f"""
-<svg class="scale-svg" viewBox="0 0 320 300" fill="none" stroke="{G}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<path d="M160 60v190" stroke-width="4"/>
-<path d="M110 262h100M130 262l30-14 30 14" stroke-width="4"/>
-<circle cx="160" cy="52" r="9" fill="{G}" stroke="none"/>
-<g class="scale-beam">
-<path d="M40 70h240" stroke-width="5"/>
-<g class="scale-pan-l">
-<path d="M50 72l-30 82M50 72l30 82" stroke-width="2"/>
-<path d="M14 154h72c0 18-16 30-36 30s-36-12-36-30z" fill="{G}" fill-opacity=".22" stroke-width="2.5"/>
-</g>
-<g class="scale-pan-r">
-<path d="M270 72l-30 82M270 72l30 82" stroke-width="2"/>
-<path d="M234 154h72c0 18-16 30-36 30s-36-12-36-30z" fill="{G}" fill-opacity=".22" stroke-width="2.5"/>
-</g>
-</g>
-</svg>"""
-
-def icon(path_d: str) -> str:
-    return f"""<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="{GI}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{path_d}</svg>"""
+logo_svg = """<svg width="34" height="34" viewBox="0 0 36 36" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<rect x="1" y="1" width="34" height="34" style="stroke:var(--gold)" stroke-width="1.2"/>
+<path d="M18 8v20M12 28h12M10 13h16M10 13l-3 7h6l-3-7zM26 13l-3 7h6l-3-7z" style="stroke:var(--gold)" stroke-width="1.3"/></svg>"""
 
 icon_shield = icon('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>')
 icon_family = icon('<circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.2"/><path d="M3 20v-1a5 5 0 0 1 10 0v1"/><path d="M14 20v-.5a3.5 3.5 0 0 1 7 0v.5"/>')
-icon_work = icon('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v3"/><path d="M3 13h18"/>')
+icon_work = icon('<rect x="3" y="7" width="18" height="13"/><path d="M16 7V4H8v3"/><path d="M3 13h18"/>')
+icon_lock = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="11" width="16" height="10"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+icon_check = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2.2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>'
+icon_wa = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.48.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47a9.4 9.4 0 0 1 6.7 2.78 9.4 9.4 0 0 1 2.77 6.7c0 5.22-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.64C5.76.64.65 5.75.65 12.03c0 2.01.52 3.97 1.52 5.7L.55 23.6l6.02-1.58a11.36 11.36 0 0 0 5.47 1.39c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.18-5.9-3.34-8.05z"/></svg>'
 
-icon_mail = f"""<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{GI}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg>"""
-icon_phone = f"""<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{GI}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>"""
-icon_lock = f"""<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{GI}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>"""
-icon_check = """<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>"""
-icon_wa = """<svg width="28" height="28" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.48.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 21.5h-.01a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47a9.4 9.4 0 0 1 6.7 2.78 9.4 9.4 0 0 1 2.77 6.7c0 5.22-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.64C5.76.64.65 5.75.65 12.03c0 2.01.52 3.97 1.52 5.7L.55 23.6l6.02-1.58a11.36 11.36 0 0 0 5.47 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.18-5.9-3.34-8.05z"/></svg>"""
-
-PHONE_DISPLAY = "+56 9 5492 2730"
-PHONE_TEL = "+56954922730"
-EMAIL = "Lex.Mfrancisca@gmail.com"
-WA_LINK = "https://wa.me/56954922730?text=Hola%2C%20quisiera%20agendar%20una%20consulta%20confidencial."
+# Balanza: el brazo gira desde el pivote y los platillos contrarrotan para colgar siempre verticales
+scale_svg = """
+<svg class="scale-svg" viewBox="0 0 360 330" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <line class="shadow-line" x1="60" y1="300" x2="300" y2="300" stroke-width="1"/>
+  <path class="stroke" d="M180 70v214" stroke-width="3"/>
+  <path class="stroke" d="M128 296h104M146 296l34-14 34 14" stroke-width="3"/>
+  <rect class="stroke" x="174" y="40" width="12" height="12" stroke-width="2"/>
+  <g class="beam">
+    <path class="stroke" d="M44 78h272" stroke-width="3.5"/>
+    <circle class="fill" cx="180" cy="78" r="6"/>
+    <g class="pan-l">
+      <path class="stroke" d="M56 80l-34 92M56 80l34 92" stroke-width="1.4"/>
+      <path class="stroke pan-fill" d="M14 172h84c0 18-19 30-42 30s-42-12-42-30z" stroke-width="2"/>
+    </g>
+    <g class="pan-r">
+      <path class="stroke" d="M304 80l-34 92M304 80l34 92" stroke-width="1.4"/>
+      <path class="stroke pan-fill" d="M262 172h84c0 18-19 30-42 30s-42-12-42-30z" stroke-width="2"/>
+    </g>
+  </g>
+</svg>"""
 
 # =========================================================
-# NAVBAR + PROGRESO + WHATSAPP
+# BARRA DE EMERGENCIA + NAVEGACIÓN + WHATSAPP
 # =========================================================
 html(f"""
-<div class="scroll-progress"></div>
-<nav class="custom-navbar" aria-label="Navegación principal">
-  <a href="#inicio" class="nav-brand" data-scroll="inicio">{nav_logo_svg}<span style="color:var(--ink)">Abogadas Hermandad</span></a>
+<div class="utility-bar" role="note">
+  <span class="hide-sm">Si estás en riesgo inminente:</span>
+  <a href="tel:149">149 Fono Familia Carabineros</a>
+  <a href="tel:1455">1455 SernamEG</a>
+</div>
+<nav class="site-nav" aria-label="Navegación principal">
+  <a class="brand" href="#inicio" data-scroll="inicio">{logo_svg}
+    <span><span class="brand-name">Abogadas Hermandad</span><span class="brand-sub">Estudio jurídico de la mujer</span></span>
+  </a>
   <div class="nav-links">
-    <a href="#areas" data-scroll="areas">Áreas</a>
-    <a href="#proceso" data-scroll="proceso">Cómo trabajamos</a>
-    <a href="#equipo" data-scroll="equipo">Equipo</a>
-    <a href="#casos" data-scroll="casos">Casos</a>
-    <a href="#contacto" data-scroll="contacto" class="nav-cta">Agendar consulta</a>
+    <a class="nl" href="#areas" data-scroll="areas">Áreas</a>
+    <a class="nl" href="#proceso" data-scroll="proceso">Proceso</a>
+    <a class="nl" href="#equipo" data-scroll="equipo">Equipo</a>
+    <a class="nl" href="#casos" data-scroll="casos">Casos</a>
+    <button class="theme-switch" type="button" data-theme-toggle aria-label="Cambiar tema" aria-pressed="false">
+      <span class="track"><span class="knob"></span></span>
+      <span class="lbl-light">Claro</span><span class="lbl-dark">Oscuro</span>
+    </button>
+    <a class="nav-cta" href="#contacto" data-scroll="contacto">Agendar consulta</a>
   </div>
 </nav>
-<a class="wa-float" href="{WA_LINK}" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">{icon_wa}</a>
+<a class="wa-float" href="{WA_LINK}" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">{icon_wa}<span>WhatsApp</span></a>
 """)
-
-# Botón de tema (fijo abajo a la izquierda)
-st.button(toggle_label, on_click=toggle_theme, key="theme_btn")
 
 # =========================================================
 # HERO
 # =========================================================
 html(f"""
 <section class="hero" id="inicio">
-  <div>
-    <div class="hero-kicker">Estudio jurídico de la mujer · Chile</div>
+  <div class="hero-copy">
+    <div class="hero-meta"><span class="rule"></span><span>Santiago · Atención en todo Chile</span></div>
     <h1 class="hero-title">
-      <span class="line"><span>Defensa legal</span></span>
-      <span class="line"><span>especializada, humana</span></span>
-      <span class="line"><span>y sin prejuicios.</span></span>
+      <span class="ln"><span>Defensa legal</span></span>
+      <span class="ln"><span>especializada, humana</span></span>
+      <span class="ln"><span>y sin prejuicios.</span></span>
     </h1>
-    <p class="hero-sub">Te acompañamos con rigor técnico y absoluta confidencialidad en violencia intrafamiliar, derecho de familia y acoso laboral. Te explicamos cada paso en lenguaje claro.</p>
+    <p class="hero-lead">Representamos a mujeres en violencia intrafamiliar, derecho de familia y acoso laboral, con rigor técnico, absoluta confidencialidad y explicaciones claras en cada etapa.</p>
     <div class="hero-actions">
-      <a class="btn-solid" href="#contacto" data-scroll="contacto"><span>Agendar consulta confidencial</span></a>
-      <a class="btn-ghost" href="tel:{PHONE_TEL}">{icon_phone}<span>Llamar ahora</span></a>
+      <a class="btn btn-primary" href="#contacto" data-scroll="contacto">Agendar consulta confidencial <span class="arrow"></span></a>
+      <a class="btn btn-secondary" href="tel:{PHONE_TEL}">Llamar {PHONE_DISPLAY}</a>
+    </div>
+    <div class="hero-facts">
+      <div><b>Confidencialidad</b><span>Protegida por secreto profesional</span></div>
+      <div><b>Medidas urgentes</b><span>Tramitación prioritaria en casos VIF</span></div>
+      <div><b>Lenguaje claro</b><span>Sabrás siempre en qué está tu causa</span></div>
     </div>
   </div>
-  <div class="scale-stage">{hero_scale_svg}</div>
+  <div class="scale-panel">
+    <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+    <div class="scale-wrap" data-theme-toggle title="Cambiar tema">{scale_svg}</div>
+    <div class="scale-state">
+      <span><span class="s-light">Modo claro · en equilibrio</span><span class="s-dark">Modo oscuro · fuera de equilibrio</span></span>
+      <span class="angle"><span class="s-light">0°</span><span class="s-dark">13°</span></span>
+    </div>
+  </div>
 </section>
-""")
-
-# =========================================================
-# URGENCIA
-# =========================================================
-html(f"""
-<div class="urgent reveal" role="note">
-  <div class="urgent-dot"></div>
-  <div>
-    <h4>¿Estás en riesgo ahora?</h4>
-    <p>Ante violencia intrafamiliar aguda, llama de inmediato a Carabineros o SernamEG. Después, nosotras gestionamos con urgencia las medidas de protección y alejamiento.</p>
-  </div>
-  <div class="urgent-phones">
-    <a class="phone-chip" href="tel:149"><b>149</b><small>Fono Familia</small></a>
-    <a class="phone-chip" href="tel:1455"><b>1455</b><small>SernamEG</small></a>
-  </div>
-</div>
 """)
 
 # =========================================================
 # ÁREAS DE PRÁCTICA
 # =========================================================
 areas = [
-    (icon_shield, "Protección y VIF",
-     "Tramitación prioritaria de medidas cautelares y querellas criminales por agresiones.",
-     ["Prohibición de acercamiento", "Salida del agresor del hogar común", "Querellas por lesiones"]),
+    (icon_shield, "Protección y violencia intrafamiliar",
+     "Tramitación prioritaria de medidas cautelares y acciones penales para resguardar tu integridad y la de tu familia.",
+     ["Prohibición de acercamiento", "Salida del agresor del hogar", "Querellas por lesiones"]),
     (icon_family, "Derecho de familia",
-     "Representación completa en los procesos que definen el bienestar de tus hijos y tu patrimonio.",
-     ["Pensión de alimentos y retención AFP", "Cuidado personal y visitas", "Divorcios"]),
-    (icon_work, "Acoso laboral · Ley Karin",
-     "Intervención estratégica ante acoso laboral o sexual y vulneración de derechos en el trabajo.",
-     ["Tutela de derechos fundamentales", "Despido indirecto", "Despido por maternidad"]),
+     "Representación completa en los procesos que definen el bienestar de tus hijos y la estabilidad de tu hogar.",
+     ["Pensión de alimentos", "Retención de fondos AFP", "Cuidado personal", "Relación directa y regular", "Divorcio"]),
+    (icon_work, "Acoso laboral y Ley Karin",
+     "Intervención estratégica ante acoso laboral o sexual y vulneración de derechos fundamentales en el trabajo.",
+     ["Tutela de derechos", "Despido indirecto", "Despido por maternidad"]),
 ]
-cards = "".join(
-    f"""<article class="service-card reveal" style="transition-delay:{i*0.1}s">
-    <div class="service-icon">{ic}</div><h3>{t}</h3><p>{d}</p>
-    <ul>{''.join(f'<li>{x}</li>' for x in items)}</ul></article>"""
-    for i, (ic, t, d, items) in enumerate(areas)
+rows = "".join(
+    f"""<a class="practice-row reveal" href="#contacto" data-scroll="contacto">
+      <div class="p-icon">{ic}</div>
+      <h3>{t}</h3>
+      <div class="p-body"><p>{d}</p><div class="p-tags">{''.join(f'<span>{x}</span>' for x in tags)}</div></div>
+      <div class="p-go"><i></i></div>
+    </a>"""
+    for ic, t, d, tags in areas
 )
 html(f"""
 <section class="section" id="areas">
-  <div class="section-head reveal">
-    <h2>Áreas de especialización</h2>
-    <p>Tres áreas, un mismo enfoque: proteger tus derechos con estrategia y con la contención que cada caso necesita.</p>
+  <div class="sec-head reveal">
+    <h2>Áreas de práctica</h2>
+    <p>Tres especialidades con un mismo método: estrategia jurídica precisa y acompañamiento cercano durante todo el proceso.</p>
   </div>
-  <div class="areas">{cards}</div>
+  <div class="sec-rule"></div>
+  <div class="practice">{rows}</div>
 </section>
 """)
 
 # =========================================================
-# CÓMO TRABAJAMOS
+# PROCESO
 # =========================================================
 steps = [
-    ("Primera conversación", "Nos cuentas tu situación con total confidencialidad. Evaluamos riesgos y opciones reales."),
-    ("Estrategia clara", "Te proponemos un plan de acción, plazos y costos, explicado sin tecnicismos."),
-    ("Representación", "Llevamos tu causa ante tribunales y te mantenemos informada en cada etapa."),
+    ("Primera conversación", "Nos cuentas tu situación de forma confidencial. Evaluamos riesgos, plazos y alternativas reales."),
+    ("Estrategia y presupuesto", "Te proponemos un plan de acción concreto, con etapas y costos explicados sin tecnicismos."),
+    ("Representación judicial", "Llevamos tu causa ante tribunales y te informamos de cada avance relevante."),
 ]
 steps_html = "".join(
-    f"""<div class="step reveal" style="transition-delay:{i*0.15}s"><div class="step-n">{i+1}</div><h4>{t}</h4><p>{d}</p></div>"""
+    f"""<div class="step"><div class="step-n">Paso {i + 1}</div><h4>{t}</h4><p>{d}</p></div>"""
     for i, (t, d) in enumerate(steps)
 )
 html(f"""
 <section class="section" id="proceso">
-  <div class="section-head reveal">
+  <div class="sec-head reveal">
     <h2>Cómo trabajamos</h2>
-    <p>Un proceso simple para que sepas siempre en qué punto está tu caso.</p>
+    <p>Un proceso ordenado para que tomes cada decisión con información y respaldo.</p>
   </div>
-  <div class="steps reveal">{steps_html}</div>
+  <div class="steps" data-steps>{steps_html}</div>
 </section>
 """)
 
@@ -504,22 +534,24 @@ html(f"""
 # EQUIPO
 # =========================================================
 photo = image_to_data_uri("fran.jpg")
-portrait = (
-    f'<img src="{photo}" alt="Retrato de María-Francisca Valentina" />'
-    if photo else '<div class="monogram">MF</div>'
-)
+portrait = (f'<img src="{photo}" alt="Retrato de María-Francisca Valentina" />'
+            if photo else '<div class="monogram">MF</div>')
 html(f"""
 <section class="section" id="equipo">
-  <div class="team">
-    <div class="portrait reveal">{portrait}</div>
-    <div class="reveal" style="transition-delay:.15s">
+  <div class="sec-head reveal">
+    <h2>Equipo</h2>
+    <p>Atención directa con la abogada a cargo de tu causa, desde la primera reunión hasta la sentencia.</p>
+  </div>
+  <div class="team reveal">
+    <div class="portrait">{portrait}</div>
+    <div class="team-body">
       <div class="team-role">Abogada fundadora</div>
       <h3>María-Francisca Valentina</h3>
-      <p class="team-bio">Abogada especialista en violencia de género, familia, penal y laboral. Combina litigación técnica con un acompañamiento cercano para la protección integral de tus derechos.</p>
-      <blockquote class="quote">Ninguna mujer debería enfrentar sola un proceso judicial. Mi trabajo es que tengas claridad y respaldo en cada decisión.</blockquote>
-      <div class="contact-row">
-        <a class="contact-pill" href="mailto:{EMAIL}">{icon_mail}<span>{EMAIL}</span></a>
-        <a class="contact-pill" href="tel:{PHONE_TEL}">{icon_phone}<span>{PHONE_DISPLAY}</span></a>
+      <p class="team-bio">Especialista en violencia de género, derecho de familia, penal y laboral. Combina litigación técnica con un acompañamiento humano para la protección integral de los derechos de sus clientas.</p>
+      <blockquote class="team-quote">Ninguna mujer debería enfrentar sola un proceso judicial. Mi trabajo es que tengas claridad y respaldo en cada decisión.</blockquote>
+      <div class="team-areas">
+        <div>Violencia de género</div><div>Derecho de familia</div>
+        <div>Derecho penal</div><div>Derecho laboral</div>
       </div>
     </div>
   </div>
@@ -527,216 +559,235 @@ html(f"""
 """)
 
 # =========================================================
-# CASOS DESTACADOS (CARRUSEL)
+# CASOS DESTACADOS
 # =========================================================
 cases = [
     ("Protección y VIF", "Medida cautelar en 24 horas",
      "Prohibición de acercamiento y salida del agresor del hogar común, otorgadas por el Juzgado de Familia de Santiago."),
     ("Pensión de alimentos", "Retención de fondos AFP",
-     "Cobro efectivo de una deuda histórica superior a $14.000.000 mediante retención judicial de fondos previsionales."),
-    ("Tutela laboral", "Acoso laboral · Ley Karin",
+     "Cobro de una deuda histórica superior a $14.000.000 mediante retención judicial de fondos previsionales."),
+    ("Tutela laboral", "Acoso laboral, Ley Karin",
      "Sentencia favorable con indemnización por vulneración de derechos fundamentales y despido indirecto."),
     ("Derecho de familia", "Cuidado personal definitivo",
-     "Resolución que resguarda el interés superior del niño, con régimen de visitas estructurado y evaluación psicológica."),
+     "Resolución que resguarda el interés superior del niño, con régimen de visitas y evaluación psicológica."),
     ("Derecho penal", "Querella por lesiones VIF",
      "Condena firme del Tribunal de Juicio Oral en lo Penal con prohibición absoluta de contacto."),
 ]
 case_cards = "".join(
-    f"""<div class="case-card"><span class="case-badge">{b}</span><h4>{t}</h4><p>{d}</p></div>"""
-    for b, t, d in cases
+    f"""<article class="case-card"><div class="case-cat">{c}</div><h4>{t}</h4><p>{d}</p></article>"""
+    for c, t, d in cases
 )
 html(f"""
 <section class="section" id="casos">
-  <div class="section-head reveal">
+  <div class="sec-head reveal">
     <h2>Casos destacados</h2>
-    <p>Resoluciones obtenidas para nuestras clientas. Pasa el cursor sobre el carrusel para leer con calma.</p>
+    <p>Resoluciones obtenidas para nuestras clientas. Pasa el cursor sobre el listado para detenerlo.</p>
   </div>
-  <div class="marquee reveal"><div class="marquee-track">{case_cards}{case_cards}</div></div>
-  <p class="disclaimer">Casos anonimizados. Los resultados anteriores no garantizan resultados futuros.</p>
+  <div class="cases reveal"><div class="cases-track">{case_cards}{case_cards}</div></div>
+  <p class="note">Casos anonimizados. Los resultados anteriores no garantizan resultados futuros.</p>
 </section>
 """)
 
 # =========================================================
-# DIPLOMAS Y CERTIFICACIONES
+# FORMACIÓN
 # =========================================================
-diplomas = [
+credentials = [
     ("https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop",
      "Universidad de Chile", "Diplomado en Derecho de Familia",
      "Litigación oral y medidas cautelares en tribunales de familia."),
     ("https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop",
-     "Pontificia Universidad Católica", "Certificación Ley Karin y género",
-     "Prevención, tutela de derechos fundamentales y acoso laboral en Chile."),
+     "Pontificia Universidad Católica", "Certificación en Ley Karin y género",
+     "Prevención, tutela de derechos fundamentales y acoso laboral."),
     ("https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=800&auto=format&fit=crop",
      "Academia Judicial / UDP", "Postítulo en Derecho Penal y VIF",
-     "Estrategia penal e interposición de querellas por agresiones graves."),
+     "Estrategia penal y querellas por agresiones graves."),
 ]
-dip_html = "".join(
-    f"""<article class="diploma-card reveal" style="transition-delay:{i*0.1}s">
-    <div class="diploma-img"><img src="{img}" alt="{t}" loading="lazy"/></div>
-    <div class="diploma-body"><small>{inst}</small><h4>{t}</h4><p>{d}</p></div></article>"""
-    for i, (img, inst, t, d) in enumerate(diplomas)
+cred_html = "".join(
+    f"""<article class="credential"><div class="cred-img"><img src="{img}" alt="{t}" loading="lazy"/></div>
+    <div class="cred-body"><small>{inst}</small><h4>{t}</h4><p>{d}</p></div></article>"""
+    for img, inst, t, d in credentials
 )
 html(f"""
 <section class="section" id="formacion">
-  <div class="section-head reveal">
+  <div class="sec-head reveal">
     <h2>Formación académica</h2>
-    <p>Especialización continua en las materias que defendemos.</p>
+    <p>Especialización continua en las materias que defendemos ante tribunales.</p>
   </div>
-  <div class="diplomas">{dip_html}</div>
+  <div class="credentials reveal">{cred_html}</div>
 </section>
 """)
 
 # =========================================================
-# FORMULARIO DE CONSULTA
+# CONTACTO
 # =========================================================
 html("""
-<section class="section" id="contacto" style="padding-bottom:1.5rem">
-  <div class="section-head reveal">
-    <h2>Agenda tu consulta confidencial</h2>
+<section class="section" id="contacto">
+  <div class="sec-head reveal">
+    <h2>Agenda tu consulta</h2>
     <p>Cuéntanos lo esencial. Te respondemos personalmente por el medio que prefieras.</p>
   </div>
 </section>
 """)
 
-with st.form("contact_form", clear_on_submit=True):
-    fc1, fc2 = st.columns(2)
-    with fc1:
-        nombre = st.text_input("Nombre completo", placeholder="Tu nombre")
-        telefono = st.text_input("Teléfono o WhatsApp", placeholder="+56 9 ...")
-    with fc2:
-        correo = st.text_input("Correo electrónico", placeholder="nombre@correo.cl")
-        materia = st.selectbox("Materia de la consulta", [
-            "Violencia intrafamiliar (VIF) / Alejamiento",
-            "Pensión de alimentos / Retención de fondos",
-            "Cuidado personal / Visitas",
-            "Acoso laboral / Ley Karin",
-            "Otra consulta legal",
-        ])
-    mensaje = st.text_area("Cuéntanos brevemente tu caso", placeholder="No necesitas usar términos legales.", height=130)
+col_info, col_form = st.columns([1, 1.5], gap="small")
 
-    submitted = st.form_submit_button("Enviar consulta confidencial")
+with col_info:
+    html(f"""
+    <div class="contact-panel reveal">
+      <h3>Hablemos con total reserva</h3>
+      <p>La primera conversación sirve para entender tu situación y explicarte tus opciones, sin compromiso.</p>
+      <div>
+        <div class="c-line"><small>Teléfono y WhatsApp</small><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></div>
+        <div class="c-line"><small>Correo electrónico</small><a href="mailto:{EMAIL}">{EMAIL}</a></div>
+        <div class="c-line"><small>Emergencias VIF</small><a href="tel:149">149 Carabineros</a><a href="tel:1455">1455 SernamEG</a></div>
+      </div>
+      <div class="c-lock">{icon_lock}<span>Toda la información que compartas está protegida por secreto profesional y no se comparte con terceros.</span></div>
+    </div>
+    """)
 
-    if submitted:
-        if nombre and (telefono or correo):
-            html(f"""<div class="success">{icon_check}<span>Consulta enviada. Te contactaremos a la brevedad.</span></div>""")
-        else:
-            st.error("Completa tu nombre y al menos un medio de contacto (teléfono o correo) para poder responderte.")
+with col_form:
+    with st.form("contact_form", clear_on_submit=True):
+        c1, c2 = st.columns(2)
+        with c1:
+            nombre = st.text_input("Nombre completo", placeholder="Tu nombre")
+            telefono = st.text_input("Teléfono o WhatsApp", placeholder="+56 9 ...")
+        with c2:
+            correo = st.text_input("Correo electrónico", placeholder="nombre@correo.cl")
+            materia = st.selectbox("Materia", [
+                "Violencia intrafamiliar / Medidas de protección",
+                "Pensión de alimentos / Retención de fondos",
+                "Cuidado personal / Visitas",
+                "Acoso laboral / Ley Karin",
+                "Otra consulta legal",
+            ])
+        mensaje = st.text_area("Describe brevemente tu caso", placeholder="No necesitas usar términos legales.", height=140)
+        submitted = st.form_submit_button("Enviar consulta confidencial")
 
-    html(f"""<div class="form-note">{icon_lock}<span style="color:var(--muted)">Protegido por secreto profesional. Tus datos no se comparten con terceros.</span></div>""")
+        if submitted:
+            if nombre and (telefono or correo):
+                html(f'<div class="success">{icon_check}<span>Consulta enviada. Te contactaremos a la brevedad.</span></div>')
+            else:
+                st.error("Indica tu nombre y al menos un medio de contacto (teléfono o correo) para poder responderte.")
 
 # =========================================================
 # FOOTER
 # =========================================================
 html(f"""
 <footer class="site-footer">
-  <div><b>Abogadas Hermandad</b><br><span>Estudio jurídico de la mujer en Chile</span></div>
-  <div style="text-align:right"><span>{EMAIL} · {PHONE_DISPLAY}</span><br><span>© 2026 Todos los derechos reservados</span></div>
+  <div class="footer-col"><b>Abogadas Hermandad</b><div>Estudio jurídico de la mujer en Chile.</div><div>© 2026 Todos los derechos reservados.</div></div>
+  <div class="footer-col"><div><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></div><div><a href="mailto:{EMAIL}">{EMAIL}</a></div></div>
+  <div class="footer-col"><div><a href="#areas" data-scroll="areas">Áreas de práctica</a></div><div><a href="#equipo" data-scroll="equipo">Equipo</a></div><div><a href="#contacto" data-scroll="contacto">Agendar consulta</a></div></div>
 </footer>
 """)
 
 # =========================================================
-# INTERACCIONES: scroll suave, navbar, progreso, revelado,
-# foco de luz en tarjetas y sonido de clic en madera
+# INTERACCIONES
+# Tema sin recarga (balanza animada), scroll suave, navbar,
+# revelado al hacer scroll y sonido de clic en madera.
 # =========================================================
 components.html("""
 <script>
 (function () {
   const win = window.parent;
   const doc = win.document;
+  const root = doc.documentElement;
   const reduce = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // ---------- Tema ----------
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    doc.querySelectorAll('.theme-switch').forEach(b => b.setAttribute('aria-pressed', t === 'dark'));
+    try { win.localStorage.setItem('hermandad-theme', t); } catch (e) {}
+  }
+  let saved = 'light';
+  try { saved = win.localStorage.getItem('hermandad-theme') || 'light'; } catch (e) {}
+  if (!root.getAttribute('data-theme')) applyTheme(saved);
+
   // ---------- Revelado al hacer scroll ----------
-  doc.documentElement.classList.add('js-reveal');
-  if (!win.__hermandadIO) {
-    win.__hermandadIO = new win.IntersectionObserver((entries) => {
+  root.classList.add('js');
+  if (!win.__hhIO) {
+    win.__hhIO = new win.IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in'); win.__hermandadIO.unobserve(e.target); }
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        if (el.hasAttribute('data-steps')) el.querySelectorAll('.step').forEach(s => s.classList.add('in'));
+        el.classList.add('in');
+        win.__hhIO.unobserve(el);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
   }
-  const observeAll = () => doc.querySelectorAll('.reveal:not(.in), .steps:not(.in)').forEach(el => {
-    if (reduce) { el.classList.add('in'); } else { win.__hermandadIO.observe(el); }
+  const observe = () => doc.querySelectorAll('.reveal:not(.in), .sec-rule:not(.in), [data-steps]:not(.in)').forEach(el => {
+    if (reduce) { el.classList.add('in'); el.querySelectorAll && el.querySelectorAll('.step').forEach(s => s.classList.add('in')); }
+    else win.__hhIO.observe(el);
   });
-  observeAll();
-  if (!win.__hermandadMO) {
-    win.__hermandadMO = new win.MutationObserver(() => observeAll());
-    win.__hermandadMO.observe(doc.body, { childList: true, subtree: true });
+  observe();
+  if (!win.__hhMO) {
+    win.__hhMO = new win.MutationObserver(observe);
+    win.__hhMO.observe(doc.body, { childList: true, subtree: true });
   }
 
-  if (win.__hermandadInit) return;
-  win.__hermandadInit = true;
-
-  // ---------- Scroll suave para enlaces internos ----------
-  doc.addEventListener('click', (e) => {
-    const link = e.target.closest('[data-scroll]');
-    if (!link) return;
-    const target = doc.getElementById(link.dataset.scroll);
-    if (!target) return;
-    e.preventDefault();
-    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  });
-
-  // ---------- Navbar compacta, barra de progreso y enlace activo ----------
-  const ids = ['areas', 'proceso', 'equipo', 'casos', 'contacto'];
-  doc.addEventListener('scroll', (e) => {
-    const el = e.target === doc ? doc.scrollingElement : e.target;
-    if (!el || !el.scrollHeight) return;
-    const max = el.scrollHeight - el.clientHeight;
-    const y = el.scrollTop;
-    const nav = doc.querySelector('.custom-navbar');
-    const bar = doc.querySelector('.scroll-progress');
-    if (nav) nav.classList.toggle('is-scrolled', y > 30);
-    if (bar && max > 0) bar.style.setProperty('--progress', Math.min(y / max, 1));
-    let current = null;
-    ids.forEach(id => {
-      const s = doc.getElementById(id);
-      if (s && s.getBoundingClientRect().top < 160) current = id;
-    });
-    doc.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.scroll === current));
-  }, true);
-
-  // ---------- Foco de luz que sigue al cursor en tarjetas ----------
-  doc.addEventListener('pointermove', (e) => {
-    const card = e.target.closest && e.target.closest('.service-card');
-    if (!card) return;
-    const r = card.getBoundingClientRect();
-    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  });
+  if (win.__hhInit) return;
+  win.__hhInit = true;
 
   // ---------- Sonido de clic en madera ----------
   let ctx = null;
-  function playWoodClick() {
+  function woodClick() {
     const AC = win.AudioContext || win.webkitAudioContext;
     if (!AC) return;
     ctx = ctx || new AC();
     const t = ctx.currentTime;
-    const tone = (f0, f1, g, dur) => {
+    const tone = (f0, f1, g, d) => {
       const o = ctx.createOscillator(), gn = ctx.createGain();
       o.type = 'sine';
       o.frequency.setValueAtTime(f0, t);
-      o.frequency.exponentialRampToValueAtTime(f1, t + dur * 0.85);
+      o.frequency.exponentialRampToValueAtTime(f1, t + d * 0.85);
       gn.gain.setValueAtTime(g, t);
-      gn.gain.exponentialRampToValueAtTime(0.001, t + dur);
-      o.connect(gn); gn.connect(ctx.destination);
-      o.start(t); o.stop(t + dur + 0.01);
+      gn.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(gn); gn.connect(ctx.destination); o.start(t); o.stop(t + d + 0.01);
     };
-    tone(1050, 400, 0.6, 0.04);
-    tone(1600, 800, 0.25, 0.025);
-    const size = Math.floor(ctx.sampleRate * 0.008);
-    const buf = ctx.createBuffer(1, size, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < size; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (size * 0.25));
-    const n = ctx.createBufferSource(); n.buffer = buf;
-    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 2.5;
-    const g = ctx.createGain(); g.gain.setValueAtTime(0.35, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.012);
-    n.connect(f); f.connect(g); g.connect(ctx.destination); n.start(t);
+    tone(1050, 400, 0.5, 0.04);
+    tone(1600, 800, 0.2, 0.025);
   }
-  doc.addEventListener('mousedown', (e) => {
-    if (e.target.closest('[data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button, .btn-solid, .nav-cta')) {
-      playWoodClick();
+
+  // ---------- Clics: tema y scroll suave ----------
+  doc.addEventListener('click', (e) => {
+    const toggle = e.target.closest('[data-theme-toggle]');
+    if (toggle) {
+      e.preventDefault();
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      woodClick();
+      return;
+    }
+    const link = e.target.closest('[data-scroll]');
+    if (link) {
+      const target = doc.getElementById(link.dataset.scroll);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     }
   });
+
+  doc.addEventListener('mousedown', (e) => {
+    if (e.target.closest('[data-testid="stFormSubmitButton"] button, .btn-primary, .nav-cta')) woodClick();
+  });
+
+  // ---------- Navbar compacta y enlace activo ----------
+  const ids = ['areas', 'proceso', 'equipo', 'casos', 'contacto'];
+  let ticking = false;
+  doc.addEventListener('scroll', (e) => {
+    if (ticking) return;
+    ticking = true;
+    win.requestAnimationFrame(() => {
+      const el = e.target === doc ? doc.scrollingElement : e.target;
+      const y = el && el.scrollTop ? el.scrollTop : 0;
+      const nav = doc.querySelector('.site-nav');
+      if (nav) nav.classList.toggle('is-scrolled', y > 40);
+      let current = null;
+      ids.forEach(id => { const s = doc.getElementById(id); if (s && s.getBoundingClientRect().top < 200) current = id; });
+      doc.querySelectorAll('.nav-links a.nl').forEach(a => a.classList.toggle('active', a.dataset.scroll === current));
+      ticking = false;
+    });
+  }, true);
 })();
 </script>
 """, height=0, width=0)
