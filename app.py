@@ -74,8 +74,8 @@ CSS = """
   --surface: #1B212D;
   --line: #2B3242;
   --line-2: #3A4356;
-  --ink: #F4F1EA;
-  --muted: #B6B1A7;
+  --ink: #FFFFFF;
+  --muted: #D2CDC3;
   --gold: #C9A45A;
   --gold-d: #D8B670;
   --btn: #C9A45A;
@@ -93,6 +93,13 @@ html, [data-testid="stMain"], [data-testid="stAppViewContainer"] { scroll-behavi
 .block-container { padding: calc(var(--alert-h) + 76px) 0 0 !important; max-width: 100% !important; }
 [data-testid="stVerticalBlock"] { gap: 0 !important; }
 ::selection { background: var(--gold); color: #FFFFFF; }
+/* Streamlit agrega un ícono de enlace junto a los títulos: se oculta */
+[data-testid="stHeaderActionElements"], .stMarkdown h1 > a, .stMarkdown h2 > a, .stMarkdown h3 > a, .stMarkdown h4 > a,
+[data-testid="stMarkdownContainer"] h1 a[href^="#"], [data-testid="stMarkdownContainer"] h2 a[href^="#"] { display: none !important; }
+[data-testid="stMarkdownContainer"], .stMarkdown, [data-testid="stElementContainer"] { width: 100% !important; max-width: 100% !important; }
+[data-testid="stMarkdownContainer"] h1, [data-testid="stMarkdownContainer"] h2, [data-testid="stMarkdownContainer"] h3, [data-testid="stMarkdownContainer"] h4 {
+  padding: 0 !important; scroll-margin-top: 0; }
+body { text-rendering: optimizeLegibility; }
 h1, h2, h3, h4 { font-family: var(--serif) !important; color: var(--ink) !important; font-weight: 600 !important; letter-spacing: -0.005em; margin: 0; }
 p { margin: 0; }
 a { text-decoration: none !important; color: inherit; }
@@ -137,12 +144,14 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
 
 /* ---------- Portada ---------- */
 .hero { background: var(--band); border-bottom: 1px solid var(--line); padding: 64px 0 0; text-align: center; }
+.hero .wrap { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.hero h1, .hero .lead { text-align: center !important; margin-left: auto !important; margin-right: auto !important; width: 100%; opacity: 1 !important; filter: none !important; }
 .scale-wrap { width: 340px; max-width: 80vw; margin: 0 auto; }
 .scale-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
 .hero .rule { width: 48px; height: 1px; background: var(--gold); margin: 36px auto 28px; }
-.hero h1 { font-size: clamp(2.5rem, 5vw, 4rem) !important; line-height: 1.08; max-width: 18ch; margin: 0 auto 22px; }
+.hero h1 { font-size: clamp(2.5rem, 5vw, 4rem) !important; line-height: 1.1 !important; max-width: 20ch; margin: 0 auto 22px !important; color: var(--ink) !important; font-weight: 600 !important; }
 .hero h1 em { font-style: italic; font-weight: 500; color: var(--gold-d); }
-.hero .lead { font-size: 1.05rem; line-height: 1.75; color: var(--muted); max-width: 40rem; margin: 0 auto 32px; }
+.hero .lead { font-size: 1.08rem; line-height: 1.75; color: var(--muted); max-width: 40rem; margin: 0 auto 32px !important; }
 .hero .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 56px; }
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--surface); border-top: 1px solid var(--line); }
 .facts div { padding: 26px 24px; text-align: center; font-size: .86rem; color: var(--muted); }
@@ -165,6 +174,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
 .sec-title h2 { font-size: clamp(2rem, 3.4vw, 2.7rem) !important; line-height: 1.1; margin-bottom: 18px; }
 .sec-title p { font-size: .98rem; line-height: 1.75; color: var(--muted); }
 .sec-title.center { text-align: center; max-width: 40rem; margin: 0 auto 56px; }
+.sec-title.center h2, .sec-title.center p { text-align: center !important; }
 
 /* Áreas: filas */
 .rows { border-top: 1px solid var(--ink); }
@@ -687,6 +697,9 @@ components.html("""
   }
   const observe = () => doc.querySelectorAll('.reveal:not(.in)').forEach(el => reduce ? el.classList.add('in') : win.__hhIO.observe(el));
   observe();
+  setTimeout(() => doc.querySelectorAll('.reveal:not(.in)').forEach(el => {
+    const r = el.getBoundingClientRect(); if (r.top < win.innerHeight) el.classList.add('in');
+  }), 1200);
   if (!win.__hhMO) { win.__hhMO = new win.MutationObserver(observe); win.__hhMO.observe(doc.body, { childList: true, subtree: true }); }
 
   if (win.__hhInit) return;
