@@ -171,6 +171,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
 .section { padding: 96px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 130px; }
 .section.alt { background: var(--surface); }
 .split { display: grid; grid-template-columns: 320px 1fr; gap: 64px; }
+.split > * { min-width: 0; }
 .sec-title .eyebrow { display: block; font-size: .78rem; font-weight: 600; color: var(--gold-d); letter-spacing: .06em; margin-bottom: 14px; }
 .sec-title h2 { font-size: clamp(2rem, 3.4vw, 2.7rem) !important; line-height: 1.1; margin-bottom: 18px; }
 .sec-title p { font-size: .98rem; line-height: 1.75; color: var(--muted); }
@@ -210,12 +211,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
 .contact-line a:hover { border-color: var(--gold); }
 .contact-line svg { stroke: var(--gold); }
 
-/* Casos: tabla */
-.cases { border-top: 1px solid var(--ink); }
-.case { display: grid; grid-template-columns: 200px 1fr 1.4fr; gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
-.case .cat { font-size: .8rem; font-weight: 600; color: var(--gold-d); }
-.case h4 { font-size: 1.35rem !important; line-height: 1.25; }
-.case p { color: var(--muted); font-size: .92rem; line-height: 1.7; }
+/* Casos: carrusel */
+.cases-carousel { position: relative; overflow: hidden; border-top: 1px solid var(--ink); padding: 28px 0 8px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+.cases-track { display: flex; width: max-content; animation: cases-scroll var(--cases-dur, 40s) linear infinite; }
+.cases-carousel:hover .cases-track, .cases-carousel:focus-within .cases-track { animation-play-state: paused; }
+.cases-group { display: flex; gap: 24px; padding-right: 24px; }
+.case { flex: 0 0 300px; display: flex; flex-direction: column; gap: 12px; background: var(--surface); border: 1px solid var(--line);
+  border-top: 2px solid var(--gold); border-radius: var(--r); padding: 28px 26px; transition: border-color .3s, transform .3s var(--ease); }
+.case:hover { border-color: var(--line-2); transform: translateY(-3px); }
+.case .cat { font-size: .78rem; font-weight: 600; color: var(--gold-d); letter-spacing: .06em; text-transform: uppercase; }
+.case h4 { font-size: 1.4rem !important; line-height: 1.25; margin: 0; }
+.case p { color: var(--muted); font-size: .92rem; line-height: 1.7; margin: 0; }
+@keyframes cases-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .note { font-size: .8rem; color: var(--muted); margin-top: 20px; }
 
 /* Formación */
@@ -300,7 +309,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
   .steps, .creds, .facts { grid-template-columns: 1fr; }
   .step, .step + .step { padding: 28px 0; border-left: none; border-bottom: 1px solid var(--line); }
   .cred + .cred, .facts div + div { border-left: none; border-top: 1px solid var(--line); }
-  .case { grid-template-columns: 1fr; gap: 8px; }
+  .case { flex-basis: 260px; padding: 24px 22px; }
+  .cases-group { gap: 16px; padding-right: 16px; }
   .site-footer .wrap { grid-template-columns: 1fr; }
   .section { padding: 72px 0; }
   .alert-bar { font-size: .76rem; justify-content: flex-start; padding: 0 48px 0 14px; }
@@ -313,6 +323,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold) !importan
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation: none !important; }
   .js .reveal { opacity: 1; }
+  .cases-carousel { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .cases-group[aria-hidden="true"] { display: none; }
 }
 """
 st.markdown(f"<style>{CSS}</style>", unsafe_allow_html=True)
@@ -573,8 +585,15 @@ cases = [
     ("Derecho penal", "Querella por lesiones VIF",
      "Condena firme del Tribunal de Juicio Oral en lo Penal con prohibición absoluta de contacto."),
 ]
-cases_html = "".join(
-    f'<div class="case"><span class="cat">{c}</span><h4>{t}</h4><p>{d}</p></div>' for c, t, d in cases
+cases_cards = "".join(
+    f'<article class="case"><span class="cat">{c}</span><h4>{t}</h4><p>{d}</p></article>' for c, t, d in cases
+)
+# El grupo se duplica para que el giro sea continuo; la copia se oculta a lectores de pantalla.
+cases_html = (
+    f'<div class="cases-track" style="--cases-dur:{len(cases) * 8}s">'
+    f'<div class="cases-group">{cases_cards}</div>'
+    f'<div class="cases-group" aria-hidden="true">{cases_cards}</div>'
+    f'</div>'
 )
 creds = [
     ("Universidad de Chile", "Diplomado en Derecho de Familia", "Litigación oral y medidas cautelares en tribunales de familia."),
@@ -593,7 +612,7 @@ html(f"""
       <p>Algunas resoluciones obtenidas para nuestras clientas, presentadas de forma anónima.</p>
     </div>
     <div class="reveal">
-      <div class="cases">{cases_html}</div>
+      <div class="cases-carousel" aria-label="Casos destacados">{cases_html}</div>
       <p class="note">Los resultados anteriores no garantizan resultados futuros. Cada caso se evalúa de forma individual.</p>
     </div>
   </div>
